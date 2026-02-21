@@ -1,39 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>The Harby Co. - Books</title>
+  <meta charset="UTF-8">
+  <title>The Harby Co. | Books</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
+<header class="header">
   <h1>The Harby Co.</h1>
   <nav>
-    <a href="index.html">Books</a>
+    <a class="active" href="index.html">Books</a>
     <a href="clothes.html">Clothes</a>
     <a href="perfume.html">Perfume</a>
     <a href="account.html">Account</a>
-    <a href="#" onclick="viewCart()">Cart (<span id="cart-count">0</span>)</a>
+    <a href="#" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</a>
   </nav>
 </header>
 
 <section class="hero">
-  <h2>Premium Book Collection</h2>
+  <h2>Premium Collections for Smart Living</h2>
+  <p>Books • Fashion • Grooming</p>
 </section>
 
 <section class="products">
   <div class="card">
     <h3>Atomic Habits</h3>
-    <p>₹499</p>
-    <button onclick="addToCart('Atomic Habits',499)">Add to Cart</button>
+    <p class="price">₹499</p>
+    <button onclick="addToCart('Atomic Habits', 499)">Add to Cart</button>
   </div>
 
   <div class="card">
     <h3>Rich Dad Poor Dad</h3>
-    <p>₹399</p>
-    <button onclick="addToCart('Rich Dad Poor Dad',399)">Add to Cart</button>
+    <p class="price">₹399</p>
+    <button onclick="addToCart('Rich Dad Poor Dad', 399)">Add to Cart</button>
+  </div>
+
+  <div class="card">
+    <h3>Think Like A Monk</h3>
+    <p class="price">₹449</p>
+    <button onclick="addToCart('Think Like A Monk', 449)">Add to Cart</button>
   </div>
 </section>
+
+<!-- CART SIDEBAR -->
+<div id="cart" class="cart">
+  <h2>Your Cart</h2>
+  <ul id="cart-items"></ul>
+  <p class="total">Total: ₹<span id="cart-total">0</span></p>
+  <button class="checkout">Checkout</button>
+  <button class="close" onclick="toggleCart()">Close</button>
+</div>
 
 <script src="script.js"></script>
 </body>
