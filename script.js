@@ -1,21 +1,29 @@
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let cartOpen = false;
+
+updateCart();
 
 function addToCart(name, price) {
   const existing = cart.find(item => item.name === name);
 
   if (existing) {
-    existing.qty += 1;
+    existing.qty++;
   } else {
     cart.push({ name, price, qty: 1 });
   }
 
+  saveCart();
   updateCart();
 }
 
 function removeItem(name) {
   cart = cart.filter(item => item.name !== name);
+  saveCart();
   updateCart();
+}
+
+function saveCart() {
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 function updateCart() {
@@ -33,8 +41,9 @@ function updateCart() {
 
     const li = document.createElement("li");
     li.innerHTML = `
-      ${item.name} (x${item.qty}) - ₹${item.price * item.qty}
-      <button onclick="removeItem('${item.name}')" style="margin-left:10px;background:red;">✕</button>
+      <span>${item.name} (x${item.qty})</span>
+      <span>₹${item.price * item.qty}</span>
+      <button onclick="removeItem('${item.name}')">✕</button>
     `;
     cartItems.appendChild(li);
   });
@@ -44,6 +53,5 @@ function updateCart() {
 }
 
 function toggleCart() {
-  cartOpen = !cartOpen;
   document.getElementById("cart").classList.toggle("open");
 }
