@@ -1,48 +1,35 @@
-﻿body {
-  margin: 0;
-  font-family: Arial;
-  background: #f4f4f4;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    color: #333;
 }
 
 header {
-  background: black;
-  color: white;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
+    background: black;
+    padding: 15px;
+    text-align: center;
+}
+
+header h1 {
+    color: white;
+    margin: 0;
 }
 
 nav a {
-  color: white;
-  margin: 10px;
-  text-decoration: none;
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
 }
 
 .hero {
-  text-align: center;
-  padding: 40px;
-  background: #ddd;
+    padding: 60px;
+    text-align: center;
 }
 
-.products {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 30px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  width: 200px;
-  text-align: center;
-  border-radius: 8px;
-}
-
-button {
-  background: black;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  cursor: pointer;
+footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 10px;
 }
