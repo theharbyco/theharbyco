@@ -157,3 +157,37 @@ button:hover {
   width: 100%;
   margin-top: 10px;
 }
+#cart {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 320px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -4px 0 10px rgba(0,0,0,0.2);
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 999;
+}
+
+#cart.open {
+  right: 0;
+}
+
+#cart h2 {
+  margin-bottom: 15px;
+}
+
+#cart-items li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#cart-items button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 3px 6px;
+  cursor: pointer;
+}
