@@ -1,18 +1,15 @@
 self.addEventListener("install", e => {
-  e.waitUntil(
-    caches.open("harby-cache").then(cache => {
-      return cache.addAll([
-        "/",
-        "/index.html",
-        "/style.css",
-        "/script.js"
-      ]);
-    })
-  );
+  self.skipWaiting();
 });
 
-self.addEventListener("fetch", e => {
-  e.respondWith(
-    caches.match(e.request).then(response => response || fetch(e.request))
+self.addEventListener("activate", e => {
+  self.clients.claim();
+});
+
+// 🔔 Notification click
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow("/")
   );
 });
