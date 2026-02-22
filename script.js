@@ -6,6 +6,12 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+auth.onAuthStateChanged(user => {
+  if(user){
+    localStorage.setItem("uid", user.uid);
+  }
+});
+saveOrder(cart, total);
 const books = [
  {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
  {name:"Rich Dad Poor Dad",cat:"Finance",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
