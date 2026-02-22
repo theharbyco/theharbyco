@@ -46,10 +46,19 @@ function render(listData){
 render(books);
 
 function addToCart(name, price){
-  cart.push({ name, price });
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const existing = cart.find(i => i.name === name);
+
+  if(existing){
+    existing.qty += 1;
+  } else {
+    cart.push({ name, price, qty: 1 });
+  }
+
   localStorage.setItem("cart", JSON.stringify(cart));
-  document.getElementById("cart-count").innerText = cart.length;
-  alert("Book added to cart");
+  document.getElementById("cart-count").innerText =
+    cart.reduce((sum,i)=>sum+i.qty,0);
 }
 
 function searchBooks(){
