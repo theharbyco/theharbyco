@@ -1,5 +1,4 @@
-function getBookImage(name) {
-  function getBookImage(name, category) {
+ function getBookImage(name, category) {
   const ol = `https://covers.openlibrary.org/b/title/${encodeURIComponent(name)}-L.jpg`;
   const fallback = `https://source.unsplash.com/300x400/?${encodeURIComponent(category)},book`;
   
