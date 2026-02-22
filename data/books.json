@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Atomic Habits",
+    "cat": "Self Help",
+    "mrp": 699,
+    "price": 399,
+    "tag": "Bestseller"
+  },
+  {
+    "name": "Rich Dad Poor Dad",
+    "cat": "Finance",
+    "mrp": 599,
+    "price": 349,
+    "tag": "New"
+  }
+]
