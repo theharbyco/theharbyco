@@ -1,0 +1,8 @@
+{
+  "name": "The Harby Co.",
+  "short_name": "Harby",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
+}
