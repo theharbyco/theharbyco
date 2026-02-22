@@ -33,8 +33,8 @@ function render(list) {
     booksDiv.innerHTML += `
       <div class="card">
         ${b.tag ? `<div class="tag">${b.tag}</div>` : ""}
-        <img src="https://picsum.photos/300/400?random=${i}">
-        <h4>${b.name}</h4>
+<img src="${getBookImage(book.name)}" 
+     onerror="this.src='https://picsum.photos/300/400?book'"> <h4>${b.name}</h4>
         <p>${b.cat}</p>
         <p class="price"><del>₹${b.mrp}</del> ₹${b.price}</p>
         <p class="off">${off}% OFF</p>
