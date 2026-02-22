@@ -4,6 +4,16 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 fetch("data/books.json")
   .then(r => r.json())
   .then(d => { books = d; renderBooks(); updateCartCount(); });
+let categories = ["All"];
+
+books.forEach(b => {
+  if (!categories.includes(b.cat)) categories.push(b.cat);
+});
+
+const select = document.getElementById("categoryFilter");
+select.innerHTML = categories.map(c =>
+  `<option value="${c}">${c}</option>`
+).join("");
 
 function renderBooks() {
   const list = document.getElementById("book-list");
