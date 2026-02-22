@@ -1,3 +1,6 @@
+function getBookImage(name) {
+  return `https://covers.openlibrary.org/b/title/${encodeURIComponent(name)}-L.jpg`;
+}
 const books = [
   { name:"Atomic Habits", cat:"Self-Help", mrp:699, price:649, tag:"Bestseller" },
   { name:"Rich Dad Poor Dad", cat:"Finance", mrp:499, price:449, tag:"New" },
