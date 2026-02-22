@@ -21,8 +21,6 @@
 <script>
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let total = 0;
-
-// 🔐 AUTO ORDER ID
 const orderId = "HBC-" + Math.floor(100000 + Math.random() * 900000);
 
 function renderCart(){
@@ -30,10 +28,15 @@ function renderCart(){
   document.getElementById("cart-items").innerHTML = "";
 
   cart.forEach((item, index) => {
-    total += item.price;
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+
     document.getElementById("cart-items").innerHTML += `
       <p>
-        ${index+1}. ${item.name} – ₹${item.price}
+        ${item.name} – ₹${item.price} × ${item.qty}
+        = ₹${itemTotal}
+        <button onclick="changeQty(${index},-1)">−</button>
+        <button onclick="changeQty(${index},1)">+</button>
         <button onclick="removeItem(${index})">❌</button>
       </p>
     `;
@@ -42,13 +45,21 @@ function renderCart(){
   document.getElementById("total").innerText = total;
 }
 
+function changeQty(i, delta){
+  cart[i].qty += delta;
+  if(cart[i].qty <= 0){
+    cart.splice(i,1);
+  }
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
 function removeItem(i){
   cart.splice(i,1);
   localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
 }
 
-// 🧾 WHATSAPP INVOICE
 function checkoutWhatsApp(){
   let invoice =
 `📚 THE HARBY CO. – ORDER INVOICE
@@ -57,13 +68,17 @@ Order ID: ${orderId}
 Order Items:
 `;
 
+  let itemCount = 0;
+
   cart.forEach((item, index) => {
-    invoice += `${index+1}. ${item.name} – ₹${item.price}\n`;
+    const itemTotal = item.price * item.qty;
+    itemCount += item.qty;
+    invoice += `${index+1}. ${item.name} (Qty: ${item.qty}) – ₹${itemTotal}\n`;
   });
 
   invoice += `
 -----------------------
-Total Items: ${cart.length}
+Total Items: ${itemCount}
 Total Amount: ₹${total}
 -----------------------
 
@@ -77,6 +92,9 @@ Please confirm this order.
   const phone = "+918858504768"; // 
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(invoice)}`;
   window.open(url, "_blank");
+
+  // 🧹 AUTO CLEAR CART AFTER ORDER
+  localStorage.removeItem("cart");
 }
 
 renderCart();
