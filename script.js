@@ -1,5 +1,9 @@
 function getBookImage(name) {
-  return `https://covers.openlibrary.org/b/title/${encodeURIComponent(name)}-L.jpg`;
+  function getBookImage(name, category) {
+  const ol = `https://covers.openlibrary.org/b/title/${encodeURIComponent(name)}-L.jpg`;
+  const fallback = `https://source.unsplash.com/300x400/?${encodeURIComponent(category)},book`;
+  
+  return { ol, fallback };
 }
 const books = [
   { name:"Atomic Habits", cat:"Self-Help", mrp:699, price:649, tag:"Bestseller" },
