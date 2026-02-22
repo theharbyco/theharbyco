@@ -50,12 +50,12 @@ header a {
   position: relative;
 }
 
-.card img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
+.card img{
+  width:100%;
+  height:280px;
+  object-fit:cover;
+  border-radius:10px;
 }
-
 .tag {
   position: absolute;
   top: 10px;
