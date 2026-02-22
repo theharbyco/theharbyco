@@ -57,6 +57,12 @@ function sendNewBookNotification(){
 }
 </script>
 </script>
+  <script>
+if(window.location.search.includes("admin=true")){
+  document.getElementById("notifyBtn").style.display="block";
+  document.getElementById("adminNotify").style.display="block";
+}
+</script>
 <script src="script.js"></script>
   <button onclick="requestNotifyPermission()" style="display:none" id="notifyBtn">
 Enable Notifications
