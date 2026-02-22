@@ -35,7 +35,35 @@
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("service-worker.js");
 }
+<script>
+function requestNotifyPermission(){
+  if("Notification" in window){
+    Notification.requestPermission();
+  }
+}
+
+function sendNewBookNotification(){
+  if(Notification.permission === "granted"){
+    navigator.serviceWorker.getRegistration().then(reg => {
+      reg.showNotification("📚 New Books Added!", {
+        body: "Fresh books are now available on The Harby Co.",
+        icon: "icon-192.png",
+        badge: "icon-192.png"
+      });
+    });
+  } else {
+    alert("Please allow notifications first.");
+  }
+}
+</script>
 </script>
 <script src="script.js"></script>
+  <button onclick="requestNotifyPermission()" style="display:none" id="notifyBtn">
+Enable Notifications
+</button>
+
+<button onclick="sendNewBookNotification()" style="display:none" id="adminNotify">
+Send New Book Alert
+</button>
 </body>
 </html>
