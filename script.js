@@ -72,3 +72,23 @@ function updateCartCount(){
 function toggleTheme(){
   document.body.classList.toggle("dark");
 }
+const books = [
+  { name: "Atomic Habits", cat: "Self-Help", mrp: 699, price: 649 },
+  { name: "Rich Dad Poor Dad", cat: "Finance", mrp: 499, price: 449 }
+];
+
+const bookContainer = document.getElementById("books");
+
+books.forEach(book => {
+  bookContainer.innerHTML += `
+    <div class="book-card">
+      <img src="https://source.unsplash.com/300x400/?book,${book.name}">
+      <h3>${book.name}</h3>
+      <p>${book.cat}</p>
+      <p class="price">
+        <span class="mrp">₹${book.mrp}</span> ₹${book.price}
+      </p>
+      <button>Add to Cart</button>
+    </div>
+  `;
+});
