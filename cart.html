@@ -1,24 +1,56 @@
-<h2>Your Cart</h2>
-<div id="cart-items"></div>
-<h3 id="total"></h3>
-<button onclick="checkout()">Checkout (WhatsApp)</button>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Cart | The Harby Co.</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<script src="script.js"></script>
+<h2 style="text-align:center">Your Cart</h2>
+
+<div id="cart-items" style="padding:15px"></div>
+
+<h3 style="text-align:center">
+  Total: ₹<span id="total">0</span>
+</h3>
+
+<div style="text-align:center">
+  <button onclick="checkoutWhatsApp()">Checkout on WhatsApp</button>
+</div>
+
 <script>
-  let box = document.getElementById("cart-items");
-  let total = 0;
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let total = 0;
+let invoice = "📚 THE HARBY CO. – ORDER INVOICE\n\nOrder Items:\n";
 
-  cart.forEach((c,i)=>{
-    total += c.price*c.qty;
-    box.innerHTML += `
-      <p>${c.name} × ${c.qty} = ₹${c.price*c.qty}
-      <button onclick="cart.splice(${i},1);saveCart();location.reload()">❌</button></p>
-    `;
-  });
+cart.forEach((item, index) => {
+  document.getElementById("cart-items").innerHTML +=
+    `<p>${index+1}. ${item.name} - ₹${item.price}</p>`;
+  total += item.price;
+  invoice += `${index+1}. ${item.name} – ₹${item.price}\n`;
+});
 
-  document.getElementById("total").innerText = "Total ₹"+total;
+invoice += `
+-----------------------
+Total Items: ${cart.length}
+Total Amount: ₹${total}
+-----------------------
 
-  function checkout(){
-    window.open("https://wa.me/+918858504768?text=Order Total ₹"+total);
-  }
+Customer Name:
+Delivery City:
+Payment Mode: COD / UPI
+
+Please confirm this order.
+`;
+
+document.getElementById("total").innerText = total;
+
+function checkoutWhatsApp(){
+  const phone = "+918858504768"; // 👈 apna WhatsApp number
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(invoice)}`;
+  window.open(url, "_blank");
+}
 </script>
+
+</body>
+</html>
