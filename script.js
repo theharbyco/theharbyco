@@ -45,10 +45,11 @@ function render(listData){
 
 render(books);
 
-function addToCart(n,p){
- cart.push({n,p});
- localStorage.setItem("cart",JSON.stringify(cart));
- document.getElementById("cart-count").innerText=cart.length;
+function addToCart(name, price){
+  cart.push({ name, price });
+  localStorage.setItem("cart", JSON.stringify(cart));
+  document.getElementById("cart-count").innerText = cart.length;
+  alert("Book added to cart");
 }
 
 function searchBooks(){
