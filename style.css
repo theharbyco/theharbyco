@@ -81,3 +81,9 @@ nav a, nav button {
 .dark .card {
   background: #1e1e1e;
 }
+.book-card img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 8px;
+}
