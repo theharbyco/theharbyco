@@ -1,7 +1,7 @@
 [
   {
     "name": "Atomic Habits",
-    "cat": "Self Help",
+    "cat": "Self-Help",
     "mrp": 699,
     "price": 399,
     "tag": "Bestseller"
@@ -12,34 +12,143 @@
     "mrp": 599,
     "price": 349,
     "tag": "New"
+  },
+  {
+    "name": "Gunahon Ka Devta",
+    "cat": "Romance",
+    "mrp": 299,
+    "price": 249
+  },
+  {
+    "name": "Raag Darbari",
+    "cat": "Satire",
+    "mrp": 399,
+    "price": 349
+  },
+  {
+    "name": "October Junction",
+    "cat": "Fiction",
+    "mrp": 350,
+    "price": 300
+  },
+  {
+    "name": "Chaurasi (84)",
+    "cat": "Historical",
+    "mrp": 299,
+    "price": 249
+  },
+  {
+    "name": "Delhi Darbar",
+    "cat": "Stories",
+    "mrp": 350,
+    "price": 300
+  },
+  {
+    "name": "Rooh",
+    "cat": "Literary",
+    "mrp": 399,
+    "price": 349
+  },
+  {
+    "name": "Shirt Ka Teesra Button",
+    "cat": "Essays",
+    "mrp": 299,
+    "price": 249
+  },
+  {
+    "name": "Deewar Mein Ek Khidki Rahti Thi",
+    "cat": "Fiction",
+    "mrp": 250,
+    "price": 200
+  },
+  {
+    "name": "Idgah",
+    "cat": "Classic",
+    "mrp": 150,
+    "price": 129
+  },
+  {
+    "name": "Godaan",
+    "cat": "Classic",
+    "mrp": 300,
+    "price": 250
+  },
+  {
+    "name": "Wings of Fire",
+    "cat": "Motivation",
+    "mrp": 499,
+    "price": 449
+  },
+  {
+    "name": "The Alchemist",
+    "cat": "Fiction",
+    "mrp": 399,
+    "price": 349
+  },
+  {
+    "name": "Five Point Someone",
+    "cat": "Campus",
+    "mrp": 299,
+    "price": 249
+  },
+  {
+    "name": "The 3 Mistakes of My Life",
+    "cat": "Fiction",
+    "mrp": 299,
+    "price": 249
+  },
+  {
+    "name": "Think Like a Monk",
+    "cat": "Self-Help",
+    "mrp": 699,
+    "price": 649
+  },
+  {
+    "name": "Ikigai",
+    "cat": "Self-Help",
+    "mrp": 499,
+    "price": 449
+  },
+  {
+    "name": "The Psychology of Money",
+    "cat": "Finance",
+    "mrp": 499,
+    "price": 449
+  },
+  {
+    "name": "Do Epic Shit",
+    "cat": "Motivation",
+    "mrp": 499,
+    "price": 449
+  },
+  {
+    "name": "You Can Win",
+    "cat": "Motivation",
+    "mrp": 350,
+    "price": 300
+  },
+  {
+    "name": "The Monk Who Sold His Ferrari",
+    "cat": "Motivation",
+    "mrp": 399,
+    "price": 349
+  },
+  {
+    "name": "BlackBook of English Vocabulary",
+    "cat": "Education",
+    "mrp": 449,
+    "price": 399
+  },
+  {
+    "name": "NCERT Class 10 English",
+    "cat": "Academic",
+    "mrp": 200,
+    "price": 150
+  },
+  {
+    "name": "SSC General Knowledge",
+    "cat": "Exam Prep",
+    "mrp": 450,
+    "price": 400
   }
-]
-[
-  { "name": "Gunahon Ka Devta", "cat": "Romance", "mrp": 299, "price": 249 },
-  { "name": "Raag Darbari", "cat": "Satire", "mrp": 399, "price": 349 },
-  { "name": "October Junction", "cat": "Fiction", "mrp": 350, "price": 300 },
-  { "name": "Chaurasi (84)", "cat": "Historical", "mrp": 299, "price": 249 },
-  { "name": "Delhi Darbar", "cat": "Stories", "mrp": 350, "price": 300 },
-  { "name": "Rooh", "cat": "Literary", "mrp": 399, "price": 349 },
-  { "name": "Shirt Ka Teesra Button", "cat": "Essays", "mrp": 299, "price": 249 },
-  { "name": "Deewar Mein Ek Khidki Rahti Thi", "cat": "Fiction", "mrp": 250, "price": 200 },
-  { "name": "Idgah", "cat": "Classic", "mrp": 150, "price": 129 },
-  { "name": "Godaan", "cat": "Classic", "mrp": 300, "price": 250 },
-
-  { "name": "Wings of Fire", "cat": "Motivation", "mrp": 499, "price": 449 },
-  { "name": "The Alchemist", "cat": "Fiction", "mrp": 399, "price": 349 },
-  { "name": "Five Point Someone", "cat": "Campus", "mrp": 299, "price": 249 },
-  { "name": "The 3 Mistakes of My Life", "cat": "Fiction", "mrp": 299, "price": 249 },
-  { "name": "Rich Dad Poor Dad", "cat": "Finance", "mrp": 499, "price": 449 },
-  { "name": "Atomic Habits", "cat": "Self-Help", "mrp": 699, "price": 649 },
-  { "name": "Think Like a Monk", "cat": "Self-Help", "mrp": 699, "price": 649 },
-  { "name": "Ikigai", "cat": "Self-Help", "mrp": 499, "price": 449 },
-  { "name": "The Psychology of Money", "cat": "Finance", "mrp": 499, "price": 449 },
-  { "name": "Do Epic Shit", "cat": "Motivation", "mrp": 499, "price": 449 },
-  { "name": "You Can Win", "cat": "Motivation", "mrp": 350, "price": 300 },
-  { "name": "The Monk Who Sold His Ferrari", "cat": "Motivation", "mrp": 399, "price": 349 },
-
-  { "name": "BlackBook of English Vocabulary", "cat": "Education", "mrp": 449, "price": 399 },
-  { "name": "NCERT Class 10 English", "cat": "Academic", "mrp": 200, "price": 150 },
-  { "name": "SSC General Knowledge", "cat": "Exam Prep", "mrp": 450, "price": 400 }
 ]
