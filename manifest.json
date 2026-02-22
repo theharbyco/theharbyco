@@ -1,10 +1,11 @@
 {
   "name": "The Harby Co",
-  "short_name": "HarbyBooks",
-  "start_url": "index.html",
+  "short_name": "Harby",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
