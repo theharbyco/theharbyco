@@ -31,7 +31,11 @@
   <p><b>Co-Founder:</b> Banktesh Tiwari</p>
   <p class="copy">© 2026 The Harby Co. All Rights Reserved.</p>
 </section>
-
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 <script src="script.js"></script>
 </body>
 </html>
