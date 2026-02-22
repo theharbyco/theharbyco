@@ -1,89 +1,85 @@
 body {
-  font-family: Arial;
   margin: 0;
-  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
 }
 
 header {
-  padding: 15px;
+  background: #000;
+  color: #fff;
+  padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #000;
-  color: #fff;
 }
 
-nav a, nav button {
-  margin-left: 10px;
+header a {
   color: #fff;
-  background: none;
-  border: none;
-  cursor: pointer;
+  margin-left: 15px;
+  text-decoration: none;
 }
 
 .about {
+  text-align: center;
+  padding: 30px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
   padding: 20px;
-  text-align: center;
 }
 
-.filters {
-  padding: 10px;
-  text-align: center;
-}
-
-.filters input, .filters select {
+.controls input, select {
   padding: 8px;
-  margin: 5px;
 }
 
-.products {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
   padding: 20px;
 }
 
 .card {
+  background: #fff;
   padding: 10px;
-  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
   position: relative;
 }
 
 .card img {
   width: 100%;
-  height: 250px;
+  height: 260px;
   object-fit: cover;
 }
 
-.badge {
+.tag {
   position: absolute;
   top: 10px;
   left: 10px;
   background: red;
-  color: white;
-  padding: 5px;
+  color: #fff;
+  padding: 4px 6px;
+  font-size: 12px;
 }
 
-.price .mrp {
-  text-decoration: line-through;
-  color: gray;
+.price del {
+  color: #888;
 }
 
 .off {
   color: green;
+  font-weight: bold;
 }
 
-.dark {
-  background: #111;
-  color: #fff;
-}
-
-.dark .card {
-  background: #1e1e1e;
-}
-.book-card img {
+button {
   width: 100%;
-  height: 320px;
-  object-fit: cover;
-  border-radius: 8px;
+  padding: 8px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
