@@ -73,3 +73,6 @@ function toggleAbout(){
 }
 
 document.getElementById("cart-count").innerText=cart.length;
+document.getElementById("cart-count").innerText =
+  (JSON.parse(localStorage.getItem("cart")) || [])
+  .reduce((s,i)=>s+i.qty,0);
