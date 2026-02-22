@@ -34,6 +34,22 @@ const books = [
 
 let cart = 0;
 
+const list = document.getElementById("book-list");
+
+books.forEach(b=>{
+  const off = Math.round(((b.mrp-b.price)/b.mrp)*100);
+  list.innerHTML += `
+    <div class="card">
+      ${b.tag?`<span class="badge">${b.tag}</span>`:""}
+      <img src="images/books/${b.img}">
+      <h3>${b.name}</h3>
+      <p>${b.cat}</p>
+      <p><del>₹${b.mrp}</del> <b>₹${b.price}</b></p>
+      <small>${off}% OFF</small>
+      <button>Add to Cart</button>
+    </div>
+  `;
+});
 const booksDiv = document.getElementById("books");
 const catSelect = document.getElementById("category");
 
