@@ -1,27 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>The Harby Co.</title>
-
-  <!-- SEO -->
-  <meta name="description" content="Buy affordable books online from The Harby Co.">
-  <meta name="keywords" content="books online, self help books, cheap books">
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
   <h1>The Harby Co.</h1>
-
   <nav>
-    <span id="user-name"></span>
-    <a href="login.html">Login</a>
-    <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
-    <button onclick="toggleTheme()">🌗</button>
+    <a href="#">Login</a>
+    <a href="#">Cart (<span id="cartCount">0</span>)</a>
   </nav>
 </header>
 
@@ -30,28 +20,20 @@
   <p>Premium & affordable books delivered to your doorstep.</p>
 </section>
 
-<section class="filters">
-  <input id="searchInput" placeholder="Search books..." onkeyup="renderBooks()">
-
-  <select id="categoryFilter" onchange="renderBooks()">
-    <option value="All">All Categories</option>
-    <option value="Self Help">Self Help</option>
-    <option value="Motivation">Motivation</option>
-    <option value="Finance">Finance</option>
-    <option value="Education">Education</option>
+<section class="controls">
+  <input type="text" id="search" placeholder="Search books...">
+  <select id="category">
+    <option value="All">All</option>
   </select>
-
-  <select id="sortPrice" onchange="renderBooks()">
-    <option value="">Sort By Price</option>
-    <option value="low">Low → High</option>
-    <option value="high">High → Low</option>
+  <select id="sort">
+    <option value="default">Sort By Price</option>
+    <option value="low">Low to High</option>
+    <option value="high">High to Low</option>
   </select>
 </section>
 
-<section id="book-list" class="products"></section>
-<div id="books"></div>
-<img src="https://source.unsplash.com/300x400/?book,Atomic Habits">  <link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
+<section id="books" class="grid"></section>
+
 <script src="script.js"></script>
 </body>
 </html>
