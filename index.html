@@ -1,44 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>The Harby Co. – Books</title>
-<link rel="stylesheet" href="style.css">
-</head>
+  <title>The Harby Co.</title>
 
+  <!-- SEO -->
+  <meta name="description" content="Buy affordable books online from The Harby Co.">
+  <meta name="keywords" content="books online, self help books, cheap books">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
 <header>
-  <div class="brand">
-    <img src="logo.png" class="logo">
-    <h1>THE HARBY CO.</h1>
-  </div>
+  <h1>The Harby Co.</h1>
+
   <nav>
-    <a href="#books">Books</a>
+    <span id="user-name"></span>
+    <a href="login.html">Login</a>
     <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+    <button onclick="toggleTheme()">🌗</button>
   </nav>
 </header>
 
-<section id="books" class="section">
-  <h2>📚 Book Collection</h2>
-
-  <!-- Search & Sort -->
-  <div class="filters">
-    <input id="searchBox" placeholder="Search book or author" onkeyup="renderBooks()">
-    <select onchange="setSort(this.value)">
-      <option value="">Sort by Price</option>
-      <option value="low">Low to High</option>
-      <option value="high">High to Low</option>
-    </select>
-  </div>
-
-  <!-- Category & Language Filters -->
-  <div class="filters" id="bookFilters"></div>
-  <div class="filters" id="languageFilters"></div>
-
-  <!-- Books -->
-  <div class="products" id="booksContainer"></div>
+<section class="about">
+  <h2>About Us</h2>
+  <p>Premium & affordable books delivered to your doorstep.</p>
 </section>
+
+<section class="filters">
+  <input id="searchInput" placeholder="Search books..." onkeyup="renderBooks()">
+
+  <select id="categoryFilter" onchange="renderBooks()">
+    <option value="All">All Categories</option>
+    <option value="Self Help">Self Help</option>
+    <option value="Motivation">Motivation</option>
+    <option value="Finance">Finance</option>
+    <option value="Education">Education</option>
+  </select>
+
+  <select id="sortPrice" onchange="renderBooks()">
+    <option value="">Sort By Price</option>
+    <option value="low">Low → High</option>
+    <option value="high">High → Low</option>
+  </select>
+</section>
+
+<section id="book-list" class="products"></section>
 
 <script src="script.js"></script>
 </body>
