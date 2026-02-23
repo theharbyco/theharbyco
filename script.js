@@ -1,3 +1,37 @@
+// 🔥 FIREBASE CONFIG (PASTE YOUR OWN)
+firebase.initializeApp({
+apiKey: "YOUR_API_KEY",
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+projectId: "YOUR_PROJECT"
+});
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 🔐 LOGIN
+function googleLogin(){
+const provider = new firebase.auth.GoogleAuthProvider();
+auth.signInWithPopup(provider);
+}
+function logout(){ auth.signOut(); }
+
+auth.onAuthStateChanged(user=>{
+if(user){
+document.getElementById("userName").innerText = "Hello, " + user.displayName;
+saveUser(user);
+}else{
+document.getElementById("userName").innerText = "";
+}
+});
+
+function saveUser(user){
+db.collection("users").doc(user.uid).set({
+name:user.displayName,
+email:user.email
+},{merge:true});
+}
+
+// 📚 BOOK DATA
 const books = [
  {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
  {name:"Rich Dad Poor Dad",cat:"Finance",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
@@ -26,80 +60,64 @@ const books = [
  {name:"SSC General Knowledge",cat:"Exam Prep",mrp:450,price:400,img:"ssc-gk.jpg"}
 ];
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+// 📦 CART
+let cart=[];
 
-function render(listData){
- document.getElementById("book-list").innerHTML="";
- listData.forEach(b=>{
-  const off=Math.round(((b.mrp-b.price)/b.mrp)*100);
-  document.getElementById("book-list").innerHTML+=`
-   <div class="card">
-    <img src="images/books/${b.img}">
-    <h3>${b.name}</h3>
-    <p>${b.cat}</p>
-    <p><del>₹${b.mrp}</del> <b>₹${b.price}</b> (${off}% OFF)</p>
-    <button onclick="addToCart('${b.name}',${b.price})">Add to Cart</button>
-   </div>`;
- });
-}
-
-render(books);
-
-function addToCart(name, price){
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  const existing = cart.find(i => i.name === name);
-
-  if(existing){
-    existing.qty += 1;
-  } else {
-    cart.push({ name, price, qty: 1 });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  document.getElementById("cart-count").innerText =
-    cart.reduce((sum,i)=>sum+i.qty,0);
-}
-
-function searchBooks(){
- const v=document.getElementById("search").value.toLowerCase();
- render(books.filter(b=>b.name.toLowerCase().includes(v)));
-}
-
-function toggleAbout(){
- const a=document.getElementById("about");
- a.style.display=a.style.display=="block"?"none":"block";
- a.scrollIntoView({behavior:"smooth"});
-}
-
-document.getElementById("cart-count").innerText =
-  (JSON.parse(localStorage.getItem("cart")) || [])
-  .reduce((s,i)=>s+i.qty,0);
-function saveOrder(cart, total){
-  const uid = localStorage.getItem("uid");
-  if(!uid){
-    alert("Please login to place order");
-    return;
-  }
-
-  db.collection("orders").add({
-    userId: uid,
-    items: cart,
-    total: total,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-}
-firebase.initializeApp({
-  apiKey: "...",
-  authDomain: "...",
-  projectId: "..."
+function loadBooks(){
+const box=document.getElementById("books");
+books.forEach((b,i)=>{
+box.innerHTML+=`
+<div class="card">
+<img src="https://covers.openlibrary.org/b/title/${b.name}-L.jpg">
+<h4>${b.name}</h4>
+<p>₹${b.price}</p>
+<button onclick="addToCart(${i})">Add</button>
+</div>`;
 });
+}
+loadBooks();
 
-const auth = firebase.auth();
-const db = firebase.firestore();
-auth.onAuthStateChanged(user => {
-  if(user){
-    localStorage.setItem("uid", user.uid);
-  }
+function addToCart(i){
+cart.push(books[i]);
+document.getElementById("cartCount").innerText=cart.length;
+}
+
+function openCart(){
+document.getElementById("cartBox").classList.add("show");
+renderCart();
+}
+function closeCart(){
+document.getElementById("cartBox").classList.remove("show");
+}
+
+function renderCart(){
+let box=document.getElementById("cartItems");
+box.innerHTML="";
+cart.forEach(c=> box.innerHTML+=`<p>${c.name} – ₹${c.price}</p>`);
+}
+
+function checkout(){
+const user=auth.currentUser;
+if(!user){ alert("Login required"); return; }
+
+let total=cart.reduce((s,i)=>s+i.price,0);
+saveOrder(user.uid,total);
+
+let msg="Order Details:%0A";
+cart.forEach(i=> msg+=`${i.name} - ₹${i.price}%0A`);
+msg+=`Total: ₹${total}`;
+
+window.open(`https://wa.me/+918858504768?text=${msg}`);
+cart=[];
+closeCart();
+}
+
+// 🧾 SAVE ORDER
+function saveOrder(uid,total){
+db.collection("orders").add({
+userId:uid,
+items:cart,
+total:total,
+date:firebase.firestore.FieldValue.serverTimestamp()
 });
-saveOrder(cart, total);
+}
