@@ -1,26 +1,17 @@
-<h2>All Orders (Admin)</h2>
-<div id="allOrders"></div>
+<h2>Admin Orders</h2>
+<div id="adminOrders"></div>
 
 <script src="script.js"></script>
 <script>
-const ADMIN_EMAIL = "youradmin@gmail.com";
-
-auth.onAuthStateChanged(user => {
-  if(!user || user.email !== ADMIN_EMAIL){
-    alert("Access denied");
-    return;
-  }
-
-  db.collection("orders")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snapshot => {
-      document.getElementById("allOrders").innerHTML = "";
-      snapshot.forEach(doc => {
-        const o = doc.data();
-        document.getElementById("allOrders").innerHTML += `
-          <p>₹${o.total} | ${o.items.length} items</p>
-        `;
-      });
-    });
+const ADMIN="youradmin@gmail.com";
+auth.onAuthStateChanged(u=>{
+if(!u || u.email!==ADMIN){ alert("Denied"); return; }
+db.collection("orders").onSnapshot(s=>{
+adminOrders.innerHTML="";
+s.forEach(d=>{
+let o=d.data();
+adminOrders.innerHTML+=`<p>₹${o.total}</p>`;
+});
+});
 });
 </script>
