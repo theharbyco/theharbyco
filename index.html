@@ -1,89 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The Harby Co. | Books</title>
-  <link rel="stylesheet" href="style.css">
- <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<meta charset="UTF-8">
+<title>The Harby Co – Books</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
 
 <header>
-  <h1>The Harby Co.</h1>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#" onclick="toggleAbout()">About</a>
-<a href="cart.html">Cart (<span id="cart-count">0</span>)</a> 
-<div id="authBox">
-  <button onclick="googleLogin()">Login with Google</button>
-
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="emailSignup()">Create Account</button>
-  <button onclick="emailLogin()">Login</button>
-
-  <p id="userName"></p>
-  <button onclick="logout()">Logout</button>
-</div>
-  </nav>
+<h1>The Harby Co</h1>
+<nav>
+<a href="orders.html">My Orders</a>
+<a href="#" onclick="openCart()">Cart (<span id="cartCount">0</span>)</a>
+</nav>
 </header>
 
-<input type="text" id="search" placeholder="Search books..." onkeyup="searchBooks()">
-
-<div id="book-list"></div>
-
-<section id="about" class="about">
-  <h2>About The Harby Co.</h2>
-  <p>
-    The Harby Co. is a book-focused platform delivering affordable and
-    meaningful books across India.
-  </p>
-  <p><b>Founder:</b> Harsh Singh</p>
-  <p><b>Co-Founder:</b> Banktesh Tiwari</p>
-  <p class="copy">© 2026 The Harby Co. All Rights Reserved.</p>
+<section id="auth">
+<button onclick="googleLogin()">Login with Google</button>
+<button onclick="logout()">Logout</button>
+<p id="userName"></p>
 </section>
-<script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("service-worker.js");
-}
-<script>
-function requestNotifyPermission(){
-  if("Notification" in window){
-    Notification.requestPermission();
-  }
-}
 
-function sendNewBookNotification(){
-  if(Notification.permission === "granted"){
-    navigator.serviceWorker.getRegistration().then(reg => {
-      reg.showNotification("📚 New Books Added!", {
-        body: "Fresh books are now available on The Harby Co.",
-        icon: "icon-192.png",
-        badge: "icon-192.png"
-      });
-    });
-  } else {
-    alert("Please allow notifications first.");
-  }
-}
-</script>
-</script>
-  <script>
-if(window.location.search.includes("admin=true")){
-  document.getElementById("notifyBtn").style.display="block";
-  document.getElementById("adminNotify").style.display="block";
-}
-</script>
+<h2>Books</h2>
+<div id="books"></div>
+
+<!-- CART -->
+<div id="cartBox" class="cart">
+<h3>Your Cart</h3>
+<div id="cartItems"></div>
+<button onclick="checkout()">Checkout via WhatsApp</button>
+<button onclick="closeCart()">Close</button>
+</div>
+
+<footer>
+<p>© 2026 The Harby Co</p>
+<p>Founder: Harsh Singh | Co-Founder: Banktesh Tiwari</p>
+</footer>
+
 <script src="script.js"></script>
-  <button onclick="requestNotifyPermission()" style="display:none" id="notifyBtn">
-Enable Notifications
-</button>
 
-<button onclick="sendNewBookNotification()" style="display:none" id="adminNotify">
-Send New Book Alert
-</button>
+<script>
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
 </body>
 </html>
