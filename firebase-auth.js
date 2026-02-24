@@ -1,54 +1,46 @@
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
-  authDomain: "theharbyco.firebaseapp.com",
-  projectId: "theharbyco",
+firebase.initializeApp({
+ apiKey:"AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
+ authDomain:"theharbyco.firebaseapp.com"
+});
+
+const auth=firebase.auth();
+let confirmation;
+
+function openLogin(){loginModal.style.display="block";}
+function closeLogin(){loginModal.style.display="none";}
+
+function loginGoogle(){
+ auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+}
+
+function emailSignup(){
+ auth.createUserWithEmailAndPassword(email.value,password.value)
+ .then(()=>alert("Account Created"));
+}
+
+function emailLogin(){
+ auth.signInWithEmailAndPassword(email.value,password.value);
+}
+
+window.onload=()=>{
+ window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha");
 };
 
-// Init Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
-
-/* ---------- GOOGLE LOGIN ---------- */
-function loginGoogle() {
-  auth.signInWithPopup(provider)
-    .then(res => {
-      document.getElementById("userName").innerText =
-        "Welcome " + res.user.displayName;
-    })
-    .catch(err => alert(err.message));
+function sendOTP(){
+ confirmation=auth.signInWithPhoneNumber(phone.value,window.recaptcha);
 }
 
-/* ---------- PHONE OTP LOGIN ---------- */
-window.onload = () => {
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-    "recaptcha-container",
-    { size: "normal" }
-  );
-};
-
-function sendOTP() {
-  const phone = document.getElementById("phone").value;
-  auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-    .then(result => {
-      window.confirmationResult = result;
-      alert("OTP Sent");
-    })
-    .catch(err => alert(err.message));
+function verifyOTP(){
+ confirmation.confirm(otp.value);
 }
 
-function verifyOTP() {
-  const otp = document.getElementById("otp").value;
-  window.confirmationResult.confirm(otp)
-    .then(res => {
-      document.getElementById("userName").innerText =
-        "Welcome " + res.user.phoneNumber;
-    })
-    .catch(() => alert("Wrong OTP"));
-}
+auth.onAuthStateChanged(u=>{
+ if(u){
+  userName.innerText="Hello "+(u.displayName||u.phoneNumber||u.email);
+  loginBtn.style.display="none";
+  logoutBtn.style.display="inline";
+  closeLogin();
+ }
+});
 
-/* ---------- LOGOUT ---------- */
-function logoutUser() {
-  auth.signOut().then(() => location.reload());
-}
+function logoutUser(){auth.signOut();location.reload();}
