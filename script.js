@@ -1,5 +1,5 @@
 const booksData = [
-   {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
+ {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
  {name:"Rich Dad Poor Dad",cat:"Finance",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
  {name:"Gunahon Ka Devta",cat:"Romance",mrp:299,price:249,img:"gunahon-ka-devta.jpg"},
  {name:"Raag Darbari",cat:"Satire",mrp:399,price:349,img:"raag-darbari.jpg"},
