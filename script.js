@@ -115,3 +115,49 @@ function updateCart(){
 }
 
 renderBooks(books);
+
+import { auth } from "./firebase.js";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+window.openLogin = () => {
+  document.getElementById("loginModal").style.display="flex";
+};
+
+// GOOGLE
+window.googleLogin = async () => {
+  await signInWithPopup(auth, new GoogleAuthProvider());
+  alert("Google login success");
+  closeLogin();
+};
+
+// EMAIL
+window.emailLogin = async () => {
+  await signInWithEmailAndPassword(auth, email.value, password.value);
+  alert("Email login success");
+  closeLogin();
+};
+
+// OTP
+window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha", {size:"normal"});
+
+window.sendOTP = async () => {
+  window.confirmationResult =
+    await signInWithPhoneNumber(auth, phone.value, recaptchaVerifier);
+  alert("OTP Sent");
+};
+
+window.verifyOTP = async () => {
+  await confirmationResult.confirm(otp.value);
+  alert("Phone login success");
+  closeLogin();
+};
+
+function closeLogin(){
+  document.getElementById("loginModal").style.display="none";
+}
