@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>The Harby Co – Book Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#111" />
+
+<link rel="stylesheet" href="style.css" />
+
+<!-- Firebase (Auth only) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">📚 TheHarbyCo</div>
+
+  <div class="search">
+    <input id="searchInput" type="text" placeholder="Search books..." />
+  </div>
+
+  <div class="actions">
+    <button id="loginBtn" onclick="openLogin()">Login</button>
+    <div class="cart-icon" onclick="openCart()">
+      🛒 <span id="cartCount">0</span>
+    </div>
+  </div>
+</header>
+
+<!-- BOOKS -->
+<main>
+  <div id="books" class="grid"></div>
+</main>
+
+<!-- CART (SLIDE-IN) -->
+<aside id="cart" class="cart">
+  <div class="cart-head">
+    <h3>Your Cart</h3>
+    <button onclick="closeCart()">✖</button>
+  </div>
+  <div id="cartItems" class="cart-items"></div>
+
+  <div class="cart-foot">
+    <div class="total">Total: ₹<span id="totalAmount">0</span></div>
+    <button class="btn" onclick="placeOrder()">Place Order</button>
+    <button class="btn" onclick="checkoutWhatsApp()">WhatsApp Checkout</button>
+    <button class="btn primary" onclick="payRazorpay()">Pay Securely</button>
+  </div>
+</aside>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+  <div class="modal-box">
+    <h3>Login</h3>
+
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+
+    <button class="btn primary" onclick="emailLogin()">Login</button>
+    <button class="btn" onclick="emailSignup()">Create Account</button>
+
+    <hr />
+    <button class="btn" onclick="googleLogin()">Login with Google</button>
+
+    <button class="close" onclick="closeLogin()">Close</button>
+  </div>
+</div>
+
+<script src="firebase-auth.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
