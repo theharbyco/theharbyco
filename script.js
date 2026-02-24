@@ -1,4 +1,16 @@
-// BOOK DATA (52)
+// Firebase config
+firebase.initializeApp({
+  apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
+  authDomain: "theharbyco.firebaseapp.com",
+  projectId: "theharbyco",
+  storageBucket: "theharbyco.firebasestorage.app",
+  messagingSenderId: "241710496520",
+  appId: "1:241710496520:web:8d8caaf54e30731e9d8abd"
+});
+
+const auth = firebase.auth();
+
+// BOOK DATA (shortened example – tu apne 52 wala paste kar sakta h)
 const books = [
   {id:1,title:"Atomic Habits",price:299,cat:"Self Help"},
   {id:2,title:"Rich Dad Poor Dad",price:249,cat:"Self Help"},
@@ -54,110 +66,88 @@ const books = [
   {id:52,title:"Mindset",price:299,cat:"Self Help"}
 ];
 
-let cart = [];
+let cart={};
 
-// RENDER BOOKS
-function renderBooks(list){
-  document.getElementById("books").innerHTML =
-    list.map(b=>`
-      <div class="book">
-        <img src="${b.img}">
-        <h4>${b.title}</h4>
-        <b>₹${b.price}</b><br>
-        <button onclick="addToCart(${b.id})">Add to Cart</button>
-      </div>
-    `).join("");
+// Render Books
+function renderBooks(list=books){
+ document.getElementById("books").innerHTML =
+ list.map(b=>`
+  <div class="book">
+    <img loading="lazy" src="${b.img}">
+    <b>${b.title}</b>
+    <p>₹${b.price}</p>
+    <button onclick="addCart(${b.id})">Add to Cart</button>
+  </div>
+ `).join("");
 }
+renderBooks();
 
-// SEARCH
+// Search
 function searchBooks(q){
-  q=q.toLowerCase();
-  renderBooks(books.filter(b=>b.title.toLowerCase().includes(q)));
+ renderBooks(books.filter(b=>b.title.toLowerCase().includes(q.toLowerCase())));
 }
 
-// CART
-function addToCart(id){
-  let item = cart.find(i=>i.id===id);
-  if(item) item.qty++;
-  else{
-    let b = books.find(x=>x.id===id);
-    cart.push({...b,qty:1});
-  }
-  updateCart();
-}
-
-function changeQty(id,delta){
-  let item = cart.find(i=>i.id===id);
-  item.qty+=delta;
-  if(item.qty<=0) cart = cart.filter(i=>i.id!==id);
-  updateCart();
+// Cart
+function addCart(id){
+ cart[id]=(cart[id]||0)+1;
+ updateCart();
 }
 
 function updateCart(){
-  let total=0,count=0;
-  document.getElementById("cartItems").innerHTML =
-    cart.map(i=>{
-      total+=i.price*i.qty;
-      count+=i.qty;
-      return `
-        <div class="cart-item">
-          ${i.title}
-          <div class="qty">
-            <button onclick="changeQty(${i.id},-1)">-</button>
-            ${i.qty}
-            <button onclick="changeQty(${i.id},1)">+</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  document.getElementById("cartTotal").innerText=total;
-  document.getElementById("cartCount").innerText=count;
+ let items="",total=0,count=0;
+ for(let id in cart){
+  let b=books.find(x=>x.id==id);
+  items+=`${b.title} × ${cart[id]}<br>`;
+  total+=b.price*cart[id];
+  count+=cart[id];
+ }
+ cartItems.innerHTML=items;
+ cartTotal.innerText="₹"+total;
+ cartCount.innerText=count;
 }
 
-renderBooks(books);
+function toggleCart(){
+ cart.style.display=cart.style.display=="block"?"none":"block";
+}
 
-import { auth } from "./firebase.js";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  RecaptchaVerifier,
-  signInWithPhoneNumber
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// Login modal
+function openLogin(){loginModal.style.display="flex"}
+function closeLogin(){loginModal.style.display="none"}
 
-window.openLogin = () => {
-  document.getElementById("loginModal").style.display="flex";
-};
+// Auth
+function emailLogin(){
+ auth.signInWithEmailAndPassword(email.value,password.value)
+ .then(()=>alert("Logged in"))
+ .catch(e=>alert(e.message));
+}
 
-// GOOGLE
-window.googleLogin = async () => {
-  await signInWithPopup(auth, new GoogleAuthProvider());
-  alert("Google login success");
-  closeLogin();
-};
-
-// EMAIL
-window.emailLogin = async () => {
-  await signInWithEmailAndPassword(auth, email.value, password.value);
-  alert("Email login success");
-  closeLogin();
-};
+function googleLogin(){
+ let p=new firebase.auth.GoogleAuthProvider();
+ auth.signInWithPopup(p);
+}
 
 // OTP
-window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha", {size:"normal"});
-
-window.sendOTP = async () => {
-  window.confirmationResult =
-    await signInWithPhoneNumber(auth, phone.value, recaptchaVerifier);
-  alert("OTP Sent");
+window.onload=()=>{
+ window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha",{size:"invisible"});
 };
 
-window.verifyOTP = async () => {
-  await confirmationResult.confirm(otp.value);
-  alert("Phone login success");
-  closeLogin();
-};
+function sendOTP(){
+ auth.signInWithPhoneNumber(phone.value,recaptcha)
+ .then(r=>window.confirmation=r);
+}
 
-function closeLogin(){
-  document.getElementById("loginModal").style.display="none";
+function verifyOTP(){
+ confirmation.confirm(otp.value).then(()=>alert("Logged in"));
+}
+
+// Dark Mode
+function toggleDark(){
+ document.body.classList.toggle("dark");
+ localStorage.setItem("theme",document.body.classList.contains("dark")?"dark":"light");
+}
+if(localStorage.getItem("theme")=="dark") document.body.classList.add("dark");
+
+// Checkout
+function checkout(){
+ alert("Payment integration next 🔐");
 }
