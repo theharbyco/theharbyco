@@ -120,7 +120,18 @@ function addToCart(id){
 }
 function openCart(){ cartBox.classList.add("open"); update(); }
 function closeCart(){ cartBox.classList.remove("open"); }
+function changeQty(id,delta){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
 
+  item.qty += delta;
+
+  if(item.qty <= 0){
+    cart = cart.filter(i=>i.id!==id);
+  }
+
+  save();
+}
 function placeOrder(){ alert("✅ Order placed successfully"); }
 function checkoutWhatsApp(){
   let msg="📚 *Order Invoice*\\n";
