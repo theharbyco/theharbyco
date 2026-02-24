@@ -30,8 +30,8 @@ footer{text-align:center;padding:20px;font-size:13px}
 <nav>
 <button onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
 <span id="userName"></span>
-<button id="googleBtn" onclick="googleLogin()">Google Login</button>
-<button id="logoutBtn" onclick="logout()" style="display:none">Logout</button>
+<button id="googleBtn" onclick="openLogin()">Login</button>
+  <button id="logoutBtn" onclick="logout()" style="display:none">Logout</button>
 </nav>
 </header>
 <!-- LOGIN MODAL -->
@@ -127,7 +127,14 @@ books.forEach((b,i)=>{
   <button onclick="addToCart(${i})">Add to Cart</button>
  </div>`;
 });
-
+<script>
+function openLogin(){
+  document.getElementById("loginModal").style.display="block";
+}
+function closeLogin(){
+  document.getElementById("loginModal").style.display="none";
+}
+</script>
 /* ---------- CART ---------- */
 let cart=[];
 function addToCart(i){
