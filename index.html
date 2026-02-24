@@ -145,7 +145,37 @@ function loginGoogle(){
  const provider=new firebase.auth.GoogleAuthProvider();
  auth.signInWithPopup(provider);
 }
+<script>
+/* -------- EMAIL SIGNUP -------- */
+function emailSignup(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+  .then(()=>alert("Account created successfully"))
+  .catch(err=>alert(err.message));
+}
+
+/* -------- EMAIL LOGIN -------- */
+function emailLogin(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+  .then(()=>alert("Login successful"))
+  .catch(err=>alert(err.message));
+}
+</script>
+  <!-- EMAIL PASSWORD LOGIN -->
+<div class="authBox">
+  <h4>Email Login</h4>
+
+  <input type="email" id="email" placeholder="Email"><br><br>
+  <input type="password" id="password" placeholder="Password"><br><br>
+
+  <button onclick="emailSignup()">Create Account</button>
+  <button onclick="emailLogin()">Login</button>
+</div>
 /* ---------------- PHONE LOGIN ---------------- */
 let confirmation;
 window.onload=()=>{window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha");}
