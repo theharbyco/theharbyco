@@ -1,4 +1,4 @@
-// Firebase config
+/* ================= FIREBASE INIT ================= */
 firebase.initializeApp({
   apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
   authDomain: "theharbyco.firebaseapp.com",
@@ -10,7 +10,7 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
-// BOOK DATA (shortened example – tu apne 52 wala paste kar sakta h)
+/* ================= BOOK DATA ================= */
 const books = [
   {id:1,title:"Atomic Habits",price:299,cat:"Self Help"},
   {id:2,title:"Rich Dad Poor Dad",price:249,cat:"Self Help"},
@@ -66,88 +66,124 @@ const books = [
   {id:52,title:"Mindset",price:299,cat:"Self Help"}
 ];
 
-let cart={};
-
-// Render Books
-function renderBooks(list=books){
- document.getElementById("books").innerHTML =
- list.map(b=>`
-  <div class="book">
-    <img loading="lazy" src="${b.img}">
-    <b>${b.title}</b>
-    <p>₹${b.price}</p>
-    <button onclick="addCart(${b.id})">Add to Cart</button>
-  </div>
- `).join("");
+/* ================= RENDER BOOKS ================= */
+const booksBox = document.getElementById("books");
+function renderBooks(list = books){
+  booksBox.innerHTML = list.map(b=>`
+    <div class="book">
+      <img loading="lazy" src="${b.img}">
+      <h4>${b.title}</h4>
+      <p>₹${b.price}</p>
+      <button onclick="addCart(${b.id})">Add to Cart</button>
+    </div>
+  `).join("");
 }
 renderBooks();
 
-// Search
+/* ================= SEARCH ================= */
 function searchBooks(q){
- renderBooks(books.filter(b=>b.title.toLowerCase().includes(q.toLowerCase())));
+  renderBooks(
+    books.filter(b=>b.title.toLowerCase().includes(q.toLowerCase()))
+  );
 }
 
-// Cart
+/* ================= CART ================= */
+let cart = {};
+
 function addCart(id){
- cart[id]=(cart[id]||0)+1;
- updateCart();
+  cart[id] = (cart[id] || 0) + 1;
+  updateCart();
 }
 
 function updateCart(){
- let items="",total=0,count=0;
- for(let id in cart){
-  let b=books.find(x=>x.id==id);
-  items+=`${b.title} × ${cart[id]}<br>`;
-  total+=b.price*cart[id];
-  count+=cart[id];
- }
- cartItems.innerHTML=items;
- cartTotal.innerText="₹"+total;
- cartCount.innerText=count;
+  let html="", total=0, count=0;
+  for(let id in cart){
+    const b = books.find(x=>x.id==id);
+    html += `${b.title} × ${cart[id]}<br>`;
+    total += b.price * cart[id];
+    count += cart[id];
+  }
+  cartItems.innerHTML = html || "Cart is empty";
+  cartTotal.innerText = "₹" + total;
+  cartCount.innerText = count;
 }
 
 function toggleCart(){
- cart.style.display=cart.style.display=="block"?"none":"block";
+  cartBox.style.display =
+    cartBox.style.display === "block" ? "none" : "block";
 }
 
-// Login modal
-function openLogin(){loginModal.style.display="flex"}
-function closeLogin(){loginModal.style.display="none"}
+/* ================= LOGIN MODAL ================= */
+function openLogin(){ loginModal.style.display="flex"; }
+function closeLogin(){ loginModal.style.display="none"; }
 
-// Auth
+/* ================= EMAIL LOGIN ================= */
 function emailLogin(){
- auth.signInWithEmailAndPassword(email.value,password.value)
- .then(()=>alert("Logged in"))
- .catch(e=>alert(e.message));
+  auth.signInWithEmailAndPassword(
+    email.value.trim(),
+    password.value.trim()
+  )
+  .then(()=>{
+    alert("✅ Login Successful");
+    closeLogin();
+  })
+  .catch(err=>alert(err.message));
 }
 
+function emailSignup(){
+  auth.createUserWithEmailAndPassword(
+    email.value.trim(),
+    password.value.trim()
+  )
+  .then(()=>{
+    alert("✅ Account Created");
+    closeLogin();
+  })
+  .catch(err=>alert(err.message));
+}
+
+/* ================= GOOGLE LOGIN ================= */
 function googleLogin(){
- let p=new firebase.auth.GoogleAuthProvider();
- auth.signInWithPopup(p);
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+  .then(()=>{
+    alert("✅ Google Login Success");
+    closeLogin();
+  })
+  .catch(err=>alert(err.message));
 }
 
-// OTP
-window.onload=()=>{
- window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha",{size:"invisible"});
-};
+/* ================= AUTH STATE ================= */
+auth.onAuthStateChanged(user=>{
+  if(user){
+    userName.innerText = "Hello " + (user.displayName || user.email);
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline";
+  }
+});
 
-function sendOTP(){
- auth.signInWithPhoneNumber(phone.value,recaptcha)
- .then(r=>window.confirmation=r);
+function logoutUser(){
+  auth.signOut();
+  location.reload();
 }
 
-function verifyOTP(){
- confirmation.confirm(otp.value).then(()=>alert("Logged in"));
-}
-
-// Dark Mode
+/* ================= DARK MODE ================= */
 function toggleDark(){
- document.body.classList.toggle("dark");
- localStorage.setItem("theme",document.body.classList.contains("dark")?"dark":"light");
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
 }
-if(localStorage.getItem("theme")=="dark") document.body.classList.add("dark");
+if(localStorage.getItem("theme")==="dark"){
+  document.body.classList.add("dark");
+}
 
-// Checkout
+/* ================= CHECKOUT ================= */
 function checkout(){
- alert("Payment integration next 🔐");
+  if(!auth.currentUser){
+    openLogin();
+    return;
+  }
+  alert("🔐 Secure payment coming next");
 }
