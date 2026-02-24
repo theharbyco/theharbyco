@@ -2,308 +2,137 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Harby Co – Books</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Harby Co – Books Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body{margin:0;font-family:Arial;background:#f4f4f4}
-header{background:#000;color:#fff;padding:10px;display:flex;justify-content:space-between}
-.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:10px}
-.book{background:#fff;padding:10px;border-radius:6px}
-.book img{width:100%;height:200px;object-fit:cover}
-.cart{position:fixed;top:0;right:-320px;width:300px;height:100%;background:#fff;padding:10px;transition:.3s;overflow:auto}
-.cart.open{right:0}
-button{padding:5px 8px;margin-top:5px}
-.qty{margin:0 5px}
-#summaryModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:none}
-#summaryBox{background:#fff;width:90%;max-width:400px;margin:80px auto;padding:15px}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f8;
+}
+
+/* HEADER */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 18px;
+  background:#111;
+  color:#fff;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+.logo{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+}
+header h2{margin:0;font-size:18px}
+
+/* SEARCH */
+.search-box{
+  padding:10px;
+  max-width:500px;
+  margin:15px auto;
+}
+.search-box input{
+  width:100%;
+  padding:10px;
+  font-size:16px;
+}
+
+/* BOOK GRID */
+#books{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:15px;
+  padding:15px;
+}
+.book{
+  background:#fff;
+  padding:10px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+  text-align:center;
+}
+.book img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+}
+.book h4{font-size:14px;margin:8px 0}
+.book b{color:#0a7}
+.book button{
+  margin-top:8px;
+  padding:6px 10px;
+  background:#0a7;
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+/* FLOATING CART */
+.floating-cart{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#fff;
+  width:260px;
+  max-height:70vh;
+  overflow:auto;
+  border-radius:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+  padding:10px;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  margin:6px 0;
+}
+.qty button{
+  padding:2px 6px;
+}
+.checkout{
+  width:100%;
+  padding:10px;
+  background:#111;
+  color:#fff;
+  border:none;
+  margin-top:10px;
+}
 </style>
 </head>
+
 <body>
 
 <header>
-  <b>The Harby Co</b>
-  <div>
-    <button onclick="openLogin()">Login</button>
-    <button onclick="toggleCart()">🛒 (<span id="cartCount">0</span>)</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <img src="logo.png" class="logo">
+    <h2>The Harby Co</h2>
   </div>
+  <div>🛒 <span id="cartCount">0</span></div>
 </header>
 
-<div style="padding:10px;background:#fff">
-  <input id="search" placeholder="Search..." onkeyup="render()" style="width:60%">
-  <select id="cat" onchange="render()">
-    <option value="All">All</option>
-    <option value="Self Help">Self Help</option>
-    <option value="Exam">Exam</option>
-    <option value="Literature">Literature</option>
-  </select>
+<div class="search-box">
+  <input type="text" placeholder="Search books..." oninput="searchBooks(this.value)">
 </div>
 
-<div class="books" id="books"></div>
+<div id="books"></div>
 
-<!-- CART -->
-<div class="cart" id="cart">
-<h3>Cart</h3>
-<div id="cartItems"></div>
-<b>Total ₹<span id="total">0</span></b><br><br>
-<button onclick="checkout()">Pay Securely</button>
+<div class="floating-cart">
+  <b>🛒 Cart</b>
+  <div id="cartItems"></div>
+  <hr>
+  <b>Total: ₹<span id="cartTotal">0</span></b>
+  <button class="checkout">Pay Securely</button>
 </div>
 
-<!-- SUMMARY -->
-<div id="summaryModal" onclick="closeSummary()">
-  <div id="summaryBox" onclick="event.stopPropagation()">
-    <h3 id="sTitle"></h3>
-    <p id="sText"></p>
-    <button onclick="closeSummary()">Close</button>
-  </div>
-</div>
-
-<script>
-const books = [
-  // Self Help & Motivation
-  {id:1,title:"Atomic Habits",price:299,img:"https://covers.openlibrary.org/b/id/10523338-L.jpg",
-   summary:"This book explains how tiny daily habits shape long-term success and how small improvements can lead to remarkable personal growth."},
-
-  {id:2,title:"Rich Dad Poor Dad",price:249,img:"https://covers.openlibrary.org/b/id/11153261-L.jpg",
-   summary:"It teaches financial thinking, focusing on assets, money mindset, and practical lessons about building long-term wealth."},
-
-  {id:3,title:"Deep Work",price:279,img:"https://covers.openlibrary.org/b/id/10958384-L.jpg",
-   summary:"The book highlights the importance of focused work and explains how deep concentration improves productivity and skill development."},
-
-  {id:4,title:"The Power of Your Subconscious Mind",price:199,img:"https://covers.openlibrary.org/b/id/8231856-L.jpg",
-   summary:"This book shows how positive thinking and belief can influence habits, confidence, and overall life direction."},
-
-  {id:5,title:"Think and Grow Rich",price:199,img:"https://covers.openlibrary.org/b/id/7222246-L.jpg",
-   summary:"It explores success principles such as desire, persistence, and mindset that help people achieve financial and personal goals."},
-
-  {id:6,title:"Ikigai",price:299,img:"https://covers.openlibrary.org/b/id/10594723-L.jpg",
-   summary:"This book discusses finding purpose in daily life and balancing passion, profession, and happiness for long-term fulfillment."},
-
-  {id:7,title:"The Alchemist",price:249,img:"https://covers.openlibrary.org/b/id/8101354-L.jpg",
-   summary:"A motivational story about following dreams, trusting oneself, and discovering meaning through personal journeys."},
-
-  {id:8,title:"You Can Win",price:199,img:"https://covers.openlibrary.org/b/id/6979861-L.jpg",
-   summary:"It focuses on positive attitude, self-confidence, and simple principles that help overcome challenges and achieve success."},
-
-  // Competitive Exams
-  {id:9,title:"Indian Polity",price:399,img:"https://covers.openlibrary.org/b/id/8225631-L.jpg",
-   summary:"A clear explanation of Indian constitution, governance, and political systems designed for competitive exam preparation."},
-
-  {id:10,title:"Indian Economy",price:349,img:"https://covers.openlibrary.org/b/id/8231999-L.jpg",
-   summary:"This book explains economic concepts, policies, and current economic structure of India in a student-friendly way."},
-
-  {id:11,title:"History of Modern India",price:329,img:"https://covers.openlibrary.org/b/id/8155422-L.jpg",
-   summary:"It covers major historical events of modern India with focus on movements, reforms, and national development."},
-
-  {id:12,title:"Indian Art and Culture",price:299,img:"https://covers.openlibrary.org/b/id/8284531-L.jpg",
-   summary:"A guide to Indian traditions, architecture, paintings, and cultural heritage for exam aspirants."},
-
-  {id:13,title:"Geography of India",price:349,img:"https://covers.openlibrary.org/b/id/8234678-L.jpg",
-   summary:"Explains physical, economic, and human geography of India with maps and easy concepts."},
-
-  {id:14,title:"NCERT Indian History (Class 6-12)",price:499,img:"https://covers.openlibrary.org/b/id/10909341-L.jpg",
-   summary:"A compiled study material based on NCERT books covering ancient, medieval, and modern Indian history."},
-
-  {id:15,title:"NCERT Geography (Class 6-12)",price:499,img:"https://covers.openlibrary.org/b/id/10909352-L.jpg",
-   summary:"Comprehensive geography content from NCERT textbooks useful for competitive examinations."},
-
-  {id:16,title:"Lucent General Knowledge",price:299,img:"https://covers.openlibrary.org/b/id/8155411-L.jpg",
-   summary:"A popular reference book covering general awareness topics required for government exams."},
-
-  {id:17,title:"Quantitative Aptitude",price:349,img:"https://covers.openlibrary.org/b/id/8234651-L.jpg",
-   summary:"It helps improve mathematical problem-solving skills with shortcuts and practice questions."},
-
-  {id:18,title:"General Science for SSC",price:279,img:"https://covers.openlibrary.org/b/id/10932411-L.jpg",
-   summary:"Covers basic physics, chemistry, and biology concepts required for SSC and other exams."},
-
-  // Hindi Literature
-  {id:19,title:"Premchand Ki Kahaniyan",price:199,img:"https://covers.openlibrary.org/b/id/10945621-L.jpg",
-   summary:"A collection of stories reflecting social reality, emotions, and moral values of Indian society."},
-
-  {id:20,title:"Godan",price:249,img:"https://covers.openlibrary.org/b/id/8157432-L.jpg",
-   summary:"A realistic novel depicting rural life, struggles of farmers, and social inequalities."},
-
-  {id:21,title:"Nirmala",price:199,img:"https://covers.openlibrary.org/b/id/10945631-L.jpg",
-   summary:"A story highlighting social pressures, marriage issues, and emotional challenges in Indian families."},
-
-  {id:22,title:"Panchatantra Stories",price:149,img:"https://covers.openlibrary.org/b/id/6979823-L.jpg",
-   summary:"Moral stories using animals and characters to teach wisdom, intelligence, and life lessons."},
-
-  {id:23,title:"Hitopadesh Stories",price:149,img:"https://covers.openlibrary.org/b/id/6979829-L.jpg",
-   summary:"Traditional moral stories that guide behavior, friendship, and decision-making."},
-
-  {id:24,title:"Ramayana (Hindi)",price:399,img:"https://covers.openlibrary.org/b/id/8231123-L.jpg",
-   summary:"An epic story of values, duty, and righteousness centered around Lord Rama."},
-
-  {id:25,title:"Mahabharata (Hindi)",price:449,img:"https://covers.openlibrary.org/b/id/8231135-L.jpg",
-   summary:"A legendary epic exploring human nature, duty, and moral conflicts through a grand narrative."},
-
-  // English Novels
-  {id:26,title:"Harry Potter and the Philosopher's Stone",price:349,img:"https://covers.openlibrary.org/b/id/7984916-L.jpg",
-   summary:"A magical story about friendship, courage, and discovering hidden potential."},
-
-  {id:27,title:"Harry Potter and the Chamber of Secrets",price:349,img:"https://covers.openlibrary.org/b/id/7984917-L.jpg",
-   summary:"Continues the magical journey with mystery, danger, and deeper friendships."},
-
-  {id:28,title:"The Hobbit",price:299,img:"https://covers.openlibrary.org/b/id/6979865-L.jpg",
-   summary:"An adventurous journey filled with courage, fantasy, and personal transformation."},
-
-  {id:29,title:"The Lord of the Rings",price:499,img:"https://covers.openlibrary.org/b/id/8231991-L.jpg",
-   summary:"A legendary fantasy tale about bravery, friendship, and the struggle between good and evil."},
-
-  {id:30,title:"The Kite Runner",price:299,img:"https://covers.openlibrary.org/b/id/8232003-L.jpg",
-   summary:"A touching story of friendship, guilt, and redemption set against changing times."},
-
-  // Indian Authors & Biographies
-  {id:31,title:"Wings of Fire",price:249,img:"https://covers.openlibrary.org/b/id/6979869-L.jpg",
-   summary:"An inspiring autobiography focusing on dreams, hard work, and national development."},
-
-  {id:32,title:"Ignited Minds",price:199,img:"https://covers.openlibrary.org/b/id/6979871-L.jpg",
-   summary:"Encourages youth to think creatively and contribute positively to society."},
-
-  {id:33,title:"My Experiments with Truth",price:249,img:"https://covers.openlibrary.org/b/id/8231997-L.jpg",
-   summary:"A personal journey of honesty, discipline, and moral growth."},
-
-  {id:34,title:"The Monk Who Sold His Ferrari",price:299,img:"https://covers.openlibrary.org/b/id/8231983-L.jpg",
-   summary:"A motivational story about balancing success, inner peace, and purpose."},
-
-  {id:35,title:"India 2020",price:249,img:"https://covers.openlibrary.org/b/id/6979874-L.jpg",
-   summary:"A vision-focused book discussing India’s potential growth and development."},
-
-  // Reasoning & Maths
-  {id:36,title:"Verbal & Non-Verbal Reasoning",price:349,img:"https://covers.openlibrary.org/b/id/8234654-L.jpg",
-   summary:"Improves logical thinking and reasoning skills required for exams."},
-
-  {id:37,title:"Fast Track Arithmetic",price:299,img:"https://covers.openlibrary.org/b/id/8234671-L.jpg",
-   summary:"Teaches quick calculation methods for competitive exam success."},
-
-  {id:38,title:"Objective General English",price:279,img:"https://covers.openlibrary.org/b/id/10932418-L.jpg",
-   summary:"Covers grammar, vocabulary, and comprehension for exam preparation."},
-
-  {id:39,title:"General Hindi for Competitive Exams",price:249,img:"https://covers.openlibrary.org/b/id/10932421-L.jpg",
-   summary:"Strengthens Hindi grammar and language skills for government exams."},
-
-  // Moral & Inspirational
-  {id:40,title:"Stories of Swami Vivekananda",price:199,img:"https://covers.openlibrary.org/b/id/6979881-L.jpg",
-   summary:"Stories inspiring confidence, discipline, and spiritual strength."},
-
-  {id:41,title:"Chanakya Neeti",price:149,img:"https://covers.openlibrary.org/b/id/6979884-L.jpg",
-   summary:"Practical life lessons on leadership, wisdom, and decision-making."},
-
-  {id:42,title:"Bhagavad Gita (Hindi)",price:299,img:"https://covers.openlibrary.org/b/id/8231149-L.jpg",
-   summary:"A spiritual guide discussing duty, action, and inner balance."},
-
-  {id:43,title:"Life Lessons from Ramayana",price:249,img:"https://covers.openlibrary.org/b/id/10932431-L.jpg",
-   summary:"Explains moral teachings and practical life lessons through epic stories."},
-
-  // Extra Popular
-  {id:44,title:"Do Epic Shit",price:299,img:"https://covers.openlibrary.org/b/id/10998765-L.jpg",
-   summary:"Motivates readers to take bold action and think creatively."},
-
-  {id:45,title:"The Psychology of Money",price:299,img:"https://covers.openlibrary.org/b/id/10998769-L.jpg",
-   summary:"Explains how behavior and mindset influence financial decisions."},
-
-  {id:46,title:"Can't Hurt Me",price:349,img:"https://covers.openlibrary.org/b/id/10998771-L.jpg",
-   summary:"A powerful story about mental strength, discipline, and resilience."},
-
-  {id:47,title:"Subtle Art of Not Giving a F*ck",price:299,img:"https://covers.openlibrary.org/b/id/10998773-L.jpg",
-   summary:"Encourages focusing on what truly matters and ignoring unnecessary pressure."},
-
-  {id:48,title:"Make Your Bed",price:199,img:"https://covers.openlibrary.org/b/id/10998775-L.jpg",
-   summary:"Simple life lessons that show how small actions can create big impact."},
-
-  {id:49,title:"Life's Amazing Secrets",price:249,img:"https://covers.openlibrary.org/b/id/10998777-L.jpg",
-   summary:"A blend of storytelling and practical wisdom for balanced living."},
-
-  {id:50,title:"Think Like a Monk",price:299,img:"https://covers.openlibrary.org/b/id/10998779-L.jpg",
-   summary:"Guides readers to train the mind for clarity, peace, and purpose."},
-
-  {id:51,title:"The Secret",price:249,img:"https://covers.openlibrary.org/b/id/6979891-L.jpg",
-   summary:"Focuses on positive thinking and mindset to attract success."},
-
-  {id:52,title:"Mindset",price:299,img:"https://covers.openlibrary.org/b/id/10998781-L.jpg",
-   summary:"Explains how growth mindset helps learning, resilience, and long-term success."}
-];
-
-// CART
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
-let user=localStorage.getItem("user");
-
-function render(){
-const box=document.getElementById("books");
-box.innerHTML="";
-const s=document.getElementById("search").value.toLowerCase();
-const c=document.getElementById("cat").value;
-
-books.filter(b=>
- b.title.toLowerCase().includes(s) &&
- (c==="All"||b.cat===c)
-).forEach(b=>{
- box.innerHTML+=`
- <div class="book">
-  <img loading="lazy" referrerpolicy="no-referrer" src="${b.img}">
-  <b>${b.title}</b>
-  <p>₹${b.price}</p>
-  <button onclick='add(${b.id})'>Add</button>
-  <button onclick='showSummary(${b.id})'>View Summary</button>
- </div>`;
-});
-}
-render();
-
-function add(id){
-let i=cart.find(x=>x.id===id);
-if(i)i.qty++; else cart.push({...books.find(b=>b.id===id),qty:1});
-save();
-}
-
-function save(){
-localStorage.setItem("cart",JSON.stringify(cart));
-updateCart();
-}
-
-function updateCart(){
-let html="",t=0;
-cart.forEach(i=>{
-t+=i.price*i.qty;
-html+=`${i.title}<br>
-<button onclick="chg(${i.id},-1)">−</button>
-<span class="qty">${i.qty}</span>
-<button onclick="chg(${i.id},1)">+</button><hr>`;
-});
-cartItems.innerHTML=html;
-total.innerText=t;
-cartCount.innerText=cart.length;
-}
-updateCart();
-
-function chg(id,n){
-let i=cart.find(x=>x.id===id);
-i.qty+=n;
-if(i.qty<=0)cart=cart.filter(x=>x.id!==id);
-save();
-}
-
-function toggleCart(){cart.classList.toggle("open")}
-
-function checkout(){
-if(!user){alert("Login required");openLogin();return;}
-alert("Order placed successfully ✅");
-}
-
-function openLogin(){
-const e=prompt("Enter email");
-if(e){localStorage.setItem("user",e);user=e;alert("Logged in")}
-}
-
-// SUMMARY
-function showSummary(id){
-const b=books.find(x=>x.id===id);
-sTitle.innerText=b.title;
-sText.innerText=b.summary;
-summaryModal.style.display="block";
-}
-function closeSummary(){summaryModal.style.display="none"}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
