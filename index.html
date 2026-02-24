@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>The Harby Co – Books</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000">
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -18,79 +18,31 @@
 <header>
 <h1>The Harby Co</h1>
 <nav>
-<a href="orders.html">My Orders</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
 <a href="#" onclick="openCart()">Cart (<span id="cartCount">0</span>)</a>
-<span id="userName"></span>
 <button id="loginBtn" onclick="loginGoogle()">Login</button>
 <button id="logoutBtn" onclick="logoutUser()" style="display:none">Logout</button>
 </nav>
 </header>
 
-<section id="auth">
-<button onclick="googleLogin()">Login with Google</button>
-<button onclick="logout()">Logout</button>
-<p id="userName"></p>
-</section>
-
-<h2>Books</h2>
-<div id="books"></div>
+<h2 style="text-align:center">Books</h2>
+<div id="books" class="book-grid"></div>
 
 <!-- CART -->
 <div id="cartBox" class="cart">
 <h3>Your Cart</h3>
 <div id="cartItems"></div>
-<button onclick="checkout()">Checkout via WhatsApp</button>
+<button onclick="checkoutWhatsApp()">Checkout via WhatsApp</button>
 <button onclick="closeCart()">Close</button>
 </div>
-function checkoutWhatsApp() {
-  let msg = "📚 *The Harby Co. Order Invoice*\n\n";
-  let total = 0;
 
-  cart.forEach(item => {
-    msg += `• ${item.name} × ${item.qty} = ₹${item.price * item.qty}\n`;
-    total += item.price * item.qty;
-  });
-
-  msg += `\n💰 *Total Amount: ₹${total}*\n`;
-  msg += `\n📦 Thank you for shopping with us!`;
-
-  window.open(`https://wa.me/+918858504768?text=${encodeURIComponent(msg)}`);
-}
 <footer>
 <p>© 2026 The Harby Co</p>
-<p>Founder: Harsh Singh | Co-Founder: Banktesh Tiwari</p>
+<a href="about.html">About</a> | <a href="contact.html">Contact</a>
 </footer>
 
 <script src="script.js"></script>
-
-<script>
-if ("serviceWorker" in navigator) {
-navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
-    authDomain: "theharbyco.firebaseapp.com",
-    projectId: "theharbyco",
-    storageBucket: "theharbyco.firebasestorage.app",
-    messagingSenderId: "241710496520",
-    appId: "1:241710496520:web:8d8caaf54e30731e9d8abd",
-    measurementId: "G-2SRRTGN77K"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
 <script src="firebase-auth.js"></script>
-</script>
 </body>
 </html>
