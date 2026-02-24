@@ -34,7 +34,34 @@ footer{text-align:center;padding:20px;font-size:13px}
 <button id="logoutBtn" onclick="logout()" style="display:none">Logout</button>
 </nav>
 </header>
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:999;">
+  <div style="background:#fff;width:320px;margin:80px auto;padding:15px;border-radius:8px;position:relative">
+    
+    <h3>Login / Signup</h3>
+    <button onclick="closeLogin()" style="position:absolute;top:8px;right:10px">✖</button>
 
+    <!-- GOOGLE -->
+    <button style="width:100%" onclick="googleLogin()">Continue with Google</button>
+    <hr>
+
+    <!-- EMAIL -->
+    <input id="email" placeholder="Email" style="width:100%;margin-top:8px"><br><br>
+    <input id="password" type="password" placeholder="Password" style="width:100%"><br><br>
+    <button style="width:49%" onclick="emailLogin()">Login</button>
+    <button style="width:49%" onclick="emailSignup()">Signup</button>
+
+    <hr>
+
+    <!-- PHONE -->
+    <input id="phone" placeholder="+91XXXXXXXXXX" style="width:100%"><br><br>
+    <div id="recaptcha"></div><br>
+    <button style="width:100%" onclick="sendOTP()">Send OTP</button><br><br>
+    <input id="otp" placeholder="Enter OTP" style="width:100%"><br><br>
+    <button style="width:100%" onclick="verifyOTP()">Verify OTP</button>
+
+  </div>
+</div>
 <!-- EMAIL LOGIN -->
 <div class="authBox">
 <h3>Email Login</h3>
