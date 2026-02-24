@@ -113,7 +113,11 @@ const bookBox=document.getElementById("books");
 books.forEach((b,i)=>{
 bookBox.innerHTML+=`
 <div class="card">
-<img src="images/${b.img}" onerror="this.src='logo.png'">
+<img 
+  src="${b.img}" 
+  loading="lazy" 
+  alt="${b.name}" 
+  onerror="this.src='logo.png'">" onerror="this.src='logo.png'">
 <h4>${b.name}</h4>
 <div class="price"><del>₹${b.mrp}</del> <b>₹${b.price}</b></div>
 <button onclick="addToCart(${i})">Add to Cart</button>
