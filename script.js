@@ -1,39 +1,5 @@
-// 🔥 FIREBASE CONFIG (PASTE YOUR OWN)
-firebase.initializeApp({
-apiKey: "YOUR_API_KEY",
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-projectId: "YOUR_PROJECT"
-});
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// 🔐 LOGIN
-function googleLogin(){
-const provider = new firebase.auth.GoogleAuthProvider();
-auth.signInWithPopup(provider);
-}
-function logout(){ auth.signOut(); }
-
-auth.onAuthStateChanged(user=>{
-if(user){
-document.getElementById("userName").innerText = "Hello, " + user.displayName;
-saveUser(user);
-}else{
-document.getElementById("userName").innerText = "";
-}
-});
-
-function saveUser(user){
-db.collection("users").doc(user.uid).set({
-name:user.displayName,
-email:user.email
-},{merge:true});
-}
-
-// 📚 BOOK DATA
-const books = [
- {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
+const booksData = [
+   {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
  {name:"Rich Dad Poor Dad",cat:"Finance",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
  {name:"Gunahon Ka Devta",cat:"Romance",mrp:299,price:249,img:"gunahon-ka-devta.jpg"},
  {name:"Raag Darbari",cat:"Satire",mrp:399,price:349,img:"raag-darbari.jpg"},
@@ -60,64 +26,53 @@ const books = [
  {name:"SSC General Knowledge",cat:"Exam Prep",mrp:450,price:400,img:"ssc-gk.jpg"}
 ];
 
-// 📦 CART
-let cart=[];
+let cart = [];
 
-function loadBooks(){
-const box=document.getElementById("books");
-books.forEach((b,i)=>{
-box.innerHTML+=`
-<div class="card">
-<img src="https://covers.openlibrary.org/b/title/${b.name}-L.jpg">
-<h4>${b.name}</h4>
-<p>₹${b.price}</p>
-<button onclick="addToCart(${i})">Add</button>
-</div>`;
+const booksDiv = document.getElementById("books");
+
+booksData.forEach(book => {
+  const off = Math.round(((book.mrp - book.price) / book.mrp) * 100);
+  booksDiv.innerHTML += `
+  <div class="book-card">
+    <img src="covers/${book.name}.jpg" alt="${book.name}">
+    <h3>${book.name}</h3>
+    <p><del>₹${book.mrp}</del> <b>₹${book.price}</b> (${off}% OFF)</p>
+    <button onclick="addToCart('${book.name}',${book.price})">Add to Cart</button>
+  </div>`;
 });
-}
-loadBooks();
 
-function addToCart(i){
-cart.push(books[i]);
-document.getElementById("cartCount").innerText=cart.length;
+function addToCart(name, price){
+  cart.push({name, price});
+  document.getElementById("cartCount").innerText = cart.length;
 }
 
 function openCart(){
-document.getElementById("cartBox").classList.add("show");
-renderCart();
+  document.getElementById("cartBox").style.display="block";
+  renderCart();
 }
+
 function closeCart(){
-document.getElementById("cartBox").classList.remove("show");
+  document.getElementById("cartBox").style.display="none";
 }
 
 function renderCart(){
-let box=document.getElementById("cartItems");
-box.innerHTML="";
-cart.forEach(c=> box.innerHTML+=`<p>${c.name} – ₹${c.price}</p>`);
+  let html="";
+  let total=0;
+  cart.forEach(i=>{
+    html+=`<p>${i.name} - ₹${i.price}</p>`;
+    total+=i.price;
+  });
+  html+=`<h4>Total: ₹${total}</h4>`;
+  document.getElementById("cartItems").innerHTML=html;
 }
 
-function checkout(){
-const user=auth.currentUser;
-if(!user){ alert("Login required"); return; }
-
-let total=cart.reduce((s,i)=>s+i.price,0);
-saveOrder(user.uid,total);
-
-let msg="Order Details:%0A";
-cart.forEach(i=> msg+=`${i.name} - ₹${i.price}%0A`);
-msg+=`Total: ₹${total}`;
-
-window.open(`https://wa.me/+918858504768?text=${msg}`);
-cart=[];
-closeCart();
-}
-
-// 🧾 SAVE ORDER
-function saveOrder(uid,total){
-db.collection("orders").add({
-userId:uid,
-items:cart,
-total:total,
-date:firebase.firestore.FieldValue.serverTimestamp()
-});
+function checkoutWhatsApp(){
+  let msg="📚 *The Harby Co Order*\n\n";
+  let total=0;
+  cart.forEach(i=>{
+    msg+=`• ${i.name} - ₹${i.price}\n`;
+    total+=i.price;
+  });
+  msg+=`\n💰 Total: ₹${total}`;
+  window.open(`https://wa.me/+918858504768?text=${encodeURIComponent(msg)}`);
 }
