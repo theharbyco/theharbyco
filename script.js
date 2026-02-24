@@ -25,54 +25,35 @@ const booksData = [
  {name:"NCERT Class 10 English",cat:"Academic",mrp:200,price:150,img:"ncert-10-english.jpg"},
  {name:"SSC General Knowledge",cat:"Exam Prep",mrp:450,price:400,img:"ssc-gk.jpg"}
 ];
-
-let cart = [];
-
-const booksDiv = document.getElementById("books");
-
-booksData.forEach(book => {
-  const off = Math.round(((book.mrp - book.price) / book.mrp) * 100);
-  booksDiv.innerHTML += `
-  <div class="book-card">
-    <img src="covers/${book.name}.jpg" alt="${book.name}">
-    <h3>${book.name}</h3>
-    <p><del>₹${book.mrp}</del> <b>₹${book.price}</b> (${off}% OFF)</p>
-    <button onclick="addToCart('${book.name}',${book.price})">Add to Cart</button>
+const box=document.getElementById("books");
+books.forEach((b,i)=>{
+  box.innerHTML+=`
+  <div class="card">
+    <img src="images/${b.img}">
+    <h4>${b.name}</h4>
+    <div class="price"><del>₹${b.mrp}</del> <b>₹${b.price}</b></div>
+    <button onclick="addToCart(${i})">Add to Cart</button>
   </div>`;
 });
 
-function addToCart(name, price){
-  cart.push({name, price});
-  document.getElementById("cartCount").innerText = cart.length;
+let cart=[];
+function addToCart(i){
+ cart.push(books[i]);
+ document.getElementById("cartCount").innerText=cart.length;
 }
 
 function openCart(){
-  document.getElementById("cartBox").style.display="block";
-  renderCart();
+ document.getElementById("cartBox").style.display="block";
+ let html="";
+ cart.forEach(c=>html+=`${c.name} – ₹${c.price}<br>`);
+ document.getElementById("cartItems").innerHTML=html;
 }
-
-function closeCart(){
-  document.getElementById("cartBox").style.display="none";
-}
-
-function renderCart(){
-  let html="";
-  let total=0;
-  cart.forEach(i=>{
-    html+=`<p>${i.name} - ₹${i.price}</p>`;
-    total+=i.price;
-  });
-  html+=`<h4>Total: ₹${total}</h4>`;
-  document.getElementById("cartItems").innerHTML=html;
-}
+function closeCart(){document.getElementById("cartBox").style.display="none";}
 
 function checkoutWhatsApp(){
-  let msg="📚 *The Harby Co Order*\n\n";
-  let total=0;
-  cart.forEach(i=>{
-    msg+=`• ${i.name} - ₹${i.price}\n`;
-    total+=i.price;
-  });
-  msg+=`\n💰 Total: ₹${total}`;
-  window.open(`https://wa.me/+918858504768?text=${encodeURIComponent(msg)}`);
+ let msg="📚 *The Harby Co Invoice*\n\n";
+ let total=0;
+ cart.forEach(i=>{msg+=`• ${i.name} ₹${i.price}\n`;total+=i.price;});
+ msg+=`\n💰 Total ₹${total}`;
+ window.open("https://wa.me/918858504768?text="+encodeURIComponent(msg));
 }
