@@ -90,14 +90,26 @@ function update(){
   cartCount.innerText = cart.reduce((s,i)=>s+i.qty,0);
   cartItems.innerHTML="";
   let total=0;
+
   cart.forEach(i=>{
     total += i.price*i.qty;
+
     cartItems.innerHTML += `
       <div class="cart-item">
-        <span>${i.title} × ${i.qty}</span>
-        <span>₹${i.price*i.qty}</span>
-      </div>`;
+        <div>
+          <strong>${i.title || "Book"}</strong><br>
+          ₹${i.price} × ${i.qty}
+        </div>
+
+        <div style="display:flex;gap:6px;align-items:center">
+          <button onclick="changeQty(${i.id},-1)">−</button>
+          <span>${i.qty}</span>
+          <button onclick="changeQty(${i.id},1)">+</button>
+        </div>
+      </div>
+    `;
   });
+
   totalAmount.innerText = total;
 }
 function addToCart(id){
