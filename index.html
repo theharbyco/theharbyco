@@ -181,14 +181,17 @@ function sendOTP(){
 function verifyOTP(){confirmation.confirm(otp.value);}
 
 /* ---------- AUTH STATE ---------- */
-auth.onAuthStateChanged(u=>{
- if(u){
-  userName.innerText="Hello "+(u.displayName||u.phoneNumber||u.email);
-  googleBtn.style.display="none";
-  logoutBtn.style.display="inline";
+auth.onAuthStateChanged(user=>{
+ if(user){
+   document.getElementById("userName").innerText =
+     "Hello " + (user.displayName || user.phoneNumber || user.email);
+
+   document.getElementById("googleBtn").style.display="none";
+   document.getElementById("logoutBtn").style.display="inline";
+
+   closeLogin(); // 🔥 modal auto close
  }
 });
-function logout(){auth.signOut();location.reload();}
 </script>
 
 </body>
