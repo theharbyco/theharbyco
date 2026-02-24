@@ -1,61 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Harby Co – Books</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Harby Co – Online Book Store</title>
 
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000">
 
-<!-- Firebase -->
+<!-- Firebase COMPAT SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#f5f5f5}
+header{background:#000;color:#fff;padding:10px}
+nav a,nav button{color:#fff;margin-right:10px;background:none;border:none;font-size:14px}
+#books{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:12px}
+.card{background:#fff;padding:10px;border-radius:6px;text-align:center}
+.card img{width:100%;height:200px;object-fit:cover}
+.price del{color:#888}
+button{padding:6px 10px;margin-top:6px}
+.cart{position:fixed;top:0;right:0;width:300px;height:100%;background:#fff;padding:10px;display:none;overflow:auto}
+footer{text-align:center;padding:20px;font-size:13px}
+.authBox{padding:10px}
+</style>
 </head>
+
 <body>
 
 <header>
-<h1>The Harby Co</h1>
+<h2>The Harby Co</h2>
 <nav>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-<a href="#" onclick="openCart()">Cart (<span id="cartCount">0</span>)</a>
-<button id="loginBtn" onclick="loginGoogle()">Login</button>
+<button onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
+<span id="userName"></span>
+<button id="loginBtn" onclick="loginGoogle()">Google Login</button>
 <button id="logoutBtn" onclick="logoutUser()" style="display:none">Logout</button>
 </nav>
 </header>
 
-<h2 style="text-align:center">Books</h2>
-<div id="books" class="book-grid"></div>
+<!-- PHONE LOGIN -->
+<div class="authBox">
+<input id="phone" placeholder="+91XXXXXXXXXX">
+<div id="recaptcha"></div>
+<button onclick="sendOTP()">Send OTP</button><br><br>
+<input id="otp" placeholder="Enter OTP">
+<button onclick="verifyOTP()">Verify OTP</button>
+</div>
+
+<h3 style="padding-left:12px">Books</h3>
+<div id="books"></div>
 
 <!-- CART -->
-<div id="cartBox" class="cart">
+<div class="cart" id="cartBox">
 <h3>Your Cart</h3>
 <div id="cartItems"></div>
-<button onclick="checkoutWhatsApp()">Checkout via WhatsApp</button>
+<button onclick="checkoutWhatsApp()">Checkout WhatsApp</button>
 <button onclick="closeCart()">Close</button>
 </div>
-<!-- LOGIN OPTIONS -->
-<div id="authBox">
-  <button onclick="loginGoogle()">Login with Google</button>
 
-  <hr>
-
-  <input type="text" id="phone" placeholder="+91XXXXXXXXXX">
-  <div id="recaptcha-container"></div>
-  <button onclick="sendOTP()">Send OTP</button>
-
-  <input type="text" id="otp" placeholder="Enter OTP">
-  <button onclick="verifyOTP()">Verify OTP</button>
-
-  <p id="userName"></p>
-</div>
 <footer>
-<p>© 2026 The Harby Co</p>
-<a href="about.html">About</a> | <a href="contact.html">Contact</a>
+<a href="about.html">About</a> | 
+<a href="contact.html">Contact</a><br><br>
+© 2026 The Harby Co
 </footer>
 
-<script src="script.js"></script>
-<script src="firebase-auth.js"></script>
+<script>
+/* ---------------- FIREBASE INIT ---------------- */
+firebase.initializeApp({
+  apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
+  authDomain: "theharbyco.firebaseapp.com",
+  projectId: "theharbyco"
+});
+const auth = firebase.auth();
+
+/* ---------------- BOOK DATA ---------------- */
+const books = [
+ {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
+ {name:"Rich Dad Poor Dad",cat:"Finance",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
+ {name:"Gunahon Ka Devta",cat:"Romance",mrp:299,price:249,img:"gunahon-ka-devta.jpg"},
+ {name:"Raag Darbari",cat:"Satire",mrp:399,price:349,img:"raag-darbari.jpg"},
+ {name:"October Junction",cat:"Fiction",mrp:350,price:300,img:"october-junction.jpg"},
+ {name:"Chaurasi (84)",cat:"Historical",mrp:299,price:249,img:"chaurasi-84.jpg"},
+ {name:"Delhi Darbar",cat:"Stories",mrp:350,price:300,img:"delhi-darbar.jpg"},
+ {name:"Rooh",cat:"Literary",mrp:399,price:349,img:"rooh.jpg"},
+ {name:"Shirt Ka Teesra Button",cat:"Essays",mrp:299,price:249,img:"shirt-ka-teesra-button.jpg"},
+ {name:"Deewar Mein Ek Khidki Rahti Thi",cat:"Fiction",mrp:250,price:200,img:"deewar-mein-ek-khidki.jpg"},
+ {name:"Idgah",cat:"Classic",mrp:150,price:129,img:"idgah.jpg"},
+ {name:"Godaan",cat:"Classic",mrp:300,price:250,img:"godaan.jpg"},
+ {name:"Wings of Fire",cat:"Motivation",mrp:499,price:449,img:"wings-of-fire.jpg"},
+ {name:"The Alchemist",cat:"Fiction",mrp:399,price:349,img:"the-alchemist.jpg"},
+ {name:"Five Point Someone",cat:"Campus",mrp:299,price:249,img:"five-point-someone.jpg"},
+ {name:"The 3 Mistakes of My Life",cat:"Fiction",mrp:299,price:249,img:"three-mistakes-of-my-life.jpg"},
+ {name:"Think Like a Monk",cat:"Self-Help",mrp:699,price:649,img:"think-like-a-monk.jpg"},
+ {name:"Ikigai",cat:"Self-Help",mrp:499,price:449,img:"ikigai.jpg"},
+ {name:"The Psychology of Money",cat:"Finance",mrp:499,price:449,img:"psychology-of-money.jpg"},
+ {name:"Do Epic Shit",cat:"Motivation",mrp:499,price:449,img:"do-epic-shit.jpg"},
+ {name:"You Can Win",cat:"Motivation",mrp:350,price:300,img:"you-can-win.jpg"},
+ {name:"The Monk Who Sold His Ferrari",cat:"Motivation",mrp:399,price:349,img:"monk-who-sold-his-ferrari.jpg"},
+ {name:"BlackBook of English Vocabulary",cat:"Education",mrp:449,price:399,img:"blackbook-vocab.jpg"},
+ {name:"NCERT Class 10 English",cat:"Academic",mrp:200,price:150,img:"ncert-10-english.jpg"},
+ {name:"SSC General Knowledge",cat:"Exam Prep",mrp:450,price:400,img:"ssc-gk.jpg"}
+];
+
+/* ---------------- RENDER BOOKS ---------------- */
+const bookBox=document.getElementById("books");
+books.forEach((b,i)=>{
+  bookBox.innerHTML+=`
+  <div class="card">
+    <img src="images/${b.img}">
+    <h4>${b.name}</h4>
+    <div class="price"><del>₹${b.mrp}</del> <b>₹${b.price}</b></div>
+    <button onclick="addToCart(${i})">Add to Cart</button>
+  </div>`;
+});
+
+/* ---------------- CART ---------------- */
+let cart=[];
+function addToCart(i){
+ cart.push({...books[i],qty:1});
+ document.getElementById("cartCount").innerText=cart.length;
+}
+function openCart(){
+ document.getElementById("cartBox").style.display="block";
+ let html="";
+ cart.forEach(c=>html+=`${c.name} – ₹${c.price}<br>`);
+ document.getElementById("cartItems").innerHTML=html;
+}
+function closeCart(){document.getElementById("cartBox").style.display="none";}
+
+/* ---------------- WHATSAPP CHECKOUT ---------------- */
+function checkoutWhatsApp(){
+ let msg="📚 *The Harby Co Order Invoice*\n\n";
+ let total=0;
+ cart.forEach(i=>{
+   msg+=`• ${i.name} - ₹${i.price}\n`;
+   total+=i.price;
+ });
+ msg+=`\n💰 Total: ₹${total}`;
+ window.open("https://wa.me/918858504768?text="+encodeURIComponent(msg));
+}
+
+/* ---------------- GOOGLE LOGIN ---------------- */
+function loginGoogle(){
+ const provider=new firebase.auth.GoogleAuthProvider();
+ auth.signInWithPopup(provider);
+}
+
+/* ---------------- PHONE LOGIN ---------------- */
+let confirmation;
+window.onload=()=>{window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha");}
+function sendOTP(){
+ confirmation=auth.signInWithPhoneNumber(
+  document.getElementById("phone").value,
+  window.recaptcha
+ );
+}
+function verifyOTP(){
+ confirmation.confirm(document.getElementById("otp").value);
+}
+
+/* ---------------- AUTH STATE ---------------- */
+auth.onAuthStateChanged(u=>{
+ if(u){
+  document.getElementById("userName").innerText="Hello "+(u.displayName||u.phoneNumber);
+  loginBtn.style.display="none";
+  logoutBtn.style.display="inline";
+ }
+});
+function logoutUser(){auth.signOut();location.reload();}
+</script>
+
 </body>
 </html>
