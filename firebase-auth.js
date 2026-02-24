@@ -1,42 +1,54 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { 
-  getAuth, 
-  signInWithPopup, 
-  GoogleAuthProvider,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAe_SM2YU2xXFP79zGMbw_zKnzLnvhno",
+  apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
   authDomain: "theharbyco.firebaseapp.com",
   projectId: "theharbyco",
-  storageBucket: "theharbyco.firebasestorage.app",
-  messagingSenderId: "241710496520",
-  appId: "1:241710496520:web:8d8caaf54e30731e9d8abd"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+// Init Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
 
-/* LOGIN */
-window.loginGoogle = () => {
-  signInWithPopup(auth, provider);
+/* ---------- GOOGLE LOGIN ---------- */
+function loginGoogle() {
+  auth.signInWithPopup(provider)
+    .then(res => {
+      document.getElementById("userName").innerText =
+        "Welcome " + res.user.displayName;
+    })
+    .catch(err => alert(err.message));
+}
+
+/* ---------- PHONE OTP LOGIN ---------- */
+window.onload = () => {
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+    "recaptcha-container",
+    { size: "normal" }
+  );
 };
 
-/* LOGOUT */
-window.logoutUser = () => {
-  signOut(auth);
-};
+function sendOTP() {
+  const phone = document.getElementById("phone").value;
+  auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+    .then(result => {
+      window.confirmationResult = result;
+      alert("OTP Sent");
+    })
+    .catch(err => alert(err.message));
+}
 
-/* USER STATE */
-onAuthStateChanged(auth, user => {
-  if (user) {
-    document.getElementById("loginBtn").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "inline";
-    document.getElementById("userName").innerText = user.displayName;
-  }
-});
-</script>
+function verifyOTP() {
+  const otp = document.getElementById("otp").value;
+  window.confirmationResult.confirm(otp)
+    .then(res => {
+      document.getElementById("userName").innerText =
+        "Welcome " + res.user.phoneNumber;
+    })
+    .catch(() => alert("Wrong OTP"));
+}
+
+/* ---------- LOGOUT ---------- */
+function logoutUser() {
+  auth.signOut().then(() => location.reload());
+}
