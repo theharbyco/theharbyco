@@ -36,7 +36,21 @@
 <button onclick="checkoutWhatsApp()">Checkout via WhatsApp</button>
 <button onclick="closeCart()">Close</button>
 </div>
+<!-- LOGIN OPTIONS -->
+<div id="authBox">
+  <button onclick="loginGoogle()">Login with Google</button>
 
+  <hr>
+
+  <input type="text" id="phone" placeholder="+91XXXXXXXXXX">
+  <div id="recaptcha-container"></div>
+  <button onclick="sendOTP()">Send OTP</button>
+
+  <input type="text" id="otp" placeholder="Enter OTP">
+  <button onclick="verifyOTP()">Verify OTP</button>
+
+  <p id="userName"></p>
+</div>
 <footer>
 <p>© 2026 The Harby Co</p>
 <a href="about.html">About</a> | <a href="contact.html">Contact</a>
