@@ -3,26 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>The Harby Co – Online Book Store</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#000">
 
-<!-- Firebase COMPAT SDK -->
+<!-- FIREBASE COMPAT SDK (ONLY THIS) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f5f5f5}
 header{background:#000;color:#fff;padding:10px}
-nav a,nav button{color:#fff;margin-right:10px;background:none;border:none;font-size:14px}
+nav button{color:#fff;margin-right:10px;background:none;border:none}
 #books{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:12px}
 .card{background:#fff;padding:10px;border-radius:6px;text-align:center}
 .card img{width:100%;height:200px;object-fit:cover}
 .price del{color:#888}
-button{padding:6px 10px;margin-top:6px}
-.cart{position:fixed;top:0;right:0;width:300px;height:100%;background:#fff;padding:10px;display:none;overflow:auto}
+.cart{position:fixed;right:0;top:0;width:300px;height:100%;background:#fff;padding:10px;display:none}
+.authBox{background:#fff;margin:10px;padding:10px;border-radius:6px}
 footer{text-align:center;padding:20px;font-size:13px}
-.authBox{padding:10px}
 </style>
 </head>
 
@@ -33,15 +30,25 @@ footer{text-align:center;padding:20px;font-size:13px}
 <nav>
 <button onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
 <span id="userName"></span>
-<button id="loginBtn" onclick="loginGoogle()">Google Login</button>
-<button id="logoutBtn" onclick="logoutUser()" style="display:none">Logout</button>
+<button id="googleBtn" onclick="googleLogin()">Google Login</button>
+<button id="logoutBtn" onclick="logout()" style="display:none">Logout</button>
 </nav>
 </header>
 
+<!-- EMAIL LOGIN -->
+<div class="authBox">
+<h3>Email Login</h3>
+<input id="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+<button onclick="emailSignup()">Create Account</button>
+<button onclick="emailLogin()">Login</button>
+</div>
+
 <!-- PHONE LOGIN -->
 <div class="authBox">
-<input id="phone" placeholder="+91XXXXXXXXXX">
-<div id="recaptcha"></div>
+<h3>Mobile OTP Login</h3>
+<input id="phone" placeholder="+91XXXXXXXXXX"><br><br>
+<div id="recaptcha"></div><br>
 <button onclick="sendOTP()">Send OTP</button><br><br>
 <input id="otp" placeholder="Enter OTP">
 <button onclick="verifyOTP()">Verify OTP</button>
@@ -59,145 +66,95 @@ footer{text-align:center;padding:20px;font-size:13px}
 </div>
 
 <footer>
-<a href="about.html">About</a> | 
-<a href="contact.html">Contact</a><br><br>
+<a href="about.html">About</a> | <a href="contact.html">Contact</a><br><br>
 © 2026 The Harby Co
 </footer>
 
 <script>
-/* ---------------- FIREBASE INIT ---------------- */
+/* ---------- FIREBASE INIT ---------- */
 firebase.initializeApp({
   apiKey: "AIzaSyAe_SMY2YU2xXFP79zGMnbw_zKnzLmvhno",
   authDomain: "theharbyco.firebaseapp.com",
-  projectId: "theharbyco"
 });
 const auth = firebase.auth();
 
-/* ---------------- BOOK DATA ---------------- */
-const books = [
- {name:"Atomic Habits",cat:"Self-Help",mrp:699,price:399,img:"atomic-habits.jpg"},
- {name:"Rich Dad Poor Dad",cat:"Finance",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
- {name:"Gunahon Ka Devta",cat:"Romance",mrp:299,price:249,img:"gunahon-ka-devta.jpg"},
- {name:"Raag Darbari",cat:"Satire",mrp:399,price:349,img:"raag-darbari.jpg"},
- {name:"October Junction",cat:"Fiction",mrp:350,price:300,img:"october-junction.jpg"},
- {name:"Chaurasi (84)",cat:"Historical",mrp:299,price:249,img:"chaurasi-84.jpg"},
- {name:"Delhi Darbar",cat:"Stories",mrp:350,price:300,img:"delhi-darbar.jpg"},
- {name:"Rooh",cat:"Literary",mrp:399,price:349,img:"rooh.jpg"},
- {name:"Shirt Ka Teesra Button",cat:"Essays",mrp:299,price:249,img:"shirt-ka-teesra-button.jpg"},
- {name:"Deewar Mein Ek Khidki Rahti Thi",cat:"Fiction",mrp:250,price:200,img:"deewar-mein-ek-khidki.jpg"},
- {name:"Idgah",cat:"Classic",mrp:150,price:129,img:"idgah.jpg"},
- {name:"Godaan",cat:"Classic",mrp:300,price:250,img:"godaan.jpg"},
- {name:"Wings of Fire",cat:"Motivation",mrp:499,price:449,img:"wings-of-fire.jpg"},
- {name:"The Alchemist",cat:"Fiction",mrp:399,price:349,img:"the-alchemist.jpg"},
- {name:"Five Point Someone",cat:"Campus",mrp:299,price:249,img:"five-point-someone.jpg"},
- {name:"The 3 Mistakes of My Life",cat:"Fiction",mrp:299,price:249,img:"three-mistakes-of-my-life.jpg"},
- {name:"Think Like a Monk",cat:"Self-Help",mrp:699,price:649,img:"think-like-a-monk.jpg"},
- {name:"Ikigai",cat:"Self-Help",mrp:499,price:449,img:"ikigai.jpg"},
- {name:"The Psychology of Money",cat:"Finance",mrp:499,price:449,img:"psychology-of-money.jpg"},
- {name:"Do Epic Shit",cat:"Motivation",mrp:499,price:449,img:"do-epic-shit.jpg"},
- {name:"You Can Win",cat:"Motivation",mrp:350,price:300,img:"you-can-win.jpg"},
- {name:"The Monk Who Sold His Ferrari",cat:"Motivation",mrp:399,price:349,img:"monk-who-sold-his-ferrari.jpg"},
- {name:"BlackBook of English Vocabulary",cat:"Education",mrp:449,price:399,img:"blackbook-vocab.jpg"},
- {name:"NCERT Class 10 English",cat:"Academic",mrp:200,price:150,img:"ncert-10-english.jpg"},
- {name:"SSC General Knowledge",cat:"Exam Prep",mrp:450,price:400,img:"ssc-gk.jpg"}
+/* ---------- BOOK DATA ---------- */
+const books=[
+{name:"Atomic Habits",mrp:699,price:399,img:"atomic-habits.jpg"},
+{name:"Rich Dad Poor Dad",mrp:599,price:349,img:"rich-dad-poor-dad.jpg"},
+{name:"Gunahon Ka Devta",mrp:299,price:249,img:"gunahon-ka-devta.jpg"},
+{name:"Raag Darbari",mrp:399,price:349,img:"raag-darbari.jpg"},
+{name:"Wings of Fire",mrp:499,price:449,img:"wings-of-fire.jpg"},
+{name:"The Alchemist",mrp:399,price:349,img:"the-alchemist.jpg"},
+{name:"You Can Win",mrp:350,price:300,img:"you-can-win.jpg"},
+{name:"SSC General Knowledge",mrp:450,price:400,img:"ssc-gk.jpg"}
 ];
 
-/* ---------------- RENDER BOOKS ---------------- */
-const bookBox=document.getElementById("books");
+const box=document.getElementById("books");
 books.forEach((b,i)=>{
-  bookBox.innerHTML+=`
-  <div class="card">
-    <img src="images/${b.img}">
-    <h4>${b.name}</h4>
-    <div class="price"><del>₹${b.mrp}</del> <b>₹${b.price}</b></div>
-    <button onclick="addToCart(${i})">Add to Cart</button>
-  </div>`;
+ box.innerHTML+=`
+ <div class="card">
+  <img src="images/${b.img}">
+  <h4>${b.name}</h4>
+  <div class="price"><del>₹${b.mrp}</del> <b>₹${b.price}</b></div>
+  <button onclick="addToCart(${i})">Add to Cart</button>
+ </div>`;
 });
 
-/* ---------------- CART ---------------- */
+/* ---------- CART ---------- */
 let cart=[];
 function addToCart(i){
- cart.push({...books[i],qty:1});
+ cart.push(books[i]);
  document.getElementById("cartCount").innerText=cart.length;
 }
 function openCart(){
- document.getElementById("cartBox").style.display="block";
- let html="";
- cart.forEach(c=>html+=`${c.name} – ₹${c.price}<br>`);
- document.getElementById("cartItems").innerHTML=html;
+ cartBox.style.display="block";
+ cartItems.innerHTML=cart.map(i=>i.name+" ₹"+i.price).join("<br>");
 }
-function closeCart(){document.getElementById("cartBox").style.display="none";}
+function closeCart(){cartBox.style.display="none";}
 
-/* ---------------- WHATSAPP CHECKOUT ---------------- */
+/* ---------- WHATSAPP ---------- */
 function checkoutWhatsApp(){
- let msg="📚 *The Harby Co Order Invoice*\n\n";
+ let msg="📚 *The Harby Co Invoice*\n\n";
  let total=0;
- cart.forEach(i=>{
-   msg+=`• ${i.name} - ₹${i.price}\n`;
-   total+=i.price;
- });
- msg+=`\n💰 Total: ₹${total}`;
+ cart.forEach(i=>{msg+=`• ${i.name} ₹${i.price}\n`;total+=i.price});
+ msg+=`\n💰 Total ₹${total}`;
  window.open("https://wa.me/918858504768?text="+encodeURIComponent(msg));
 }
 
-/* ---------------- GOOGLE LOGIN ---------------- */
-function loginGoogle(){
- const provider=new firebase.auth.GoogleAuthProvider();
- auth.signInWithPopup(provider);
+/* ---------- GOOGLE LOGIN ---------- */
+function googleLogin(){
+ auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
 }
-<script>
-/* -------- EMAIL SIGNUP -------- */
+
+/* ---------- EMAIL LOGIN ---------- */
 function emailSignup(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  firebase.auth().createUserWithEmailAndPassword(email, password)
-  .then(()=>alert("Account created successfully"))
-  .catch(err=>alert(err.message));
+ auth.createUserWithEmailAndPassword(email.value,password.value)
+ .then(()=>alert("Account created"));
 }
-
-/* -------- EMAIL LOGIN -------- */
 function emailLogin(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  firebase.auth().signInWithEmailAndPassword(email, password)
-  .then(()=>alert("Login successful"))
-  .catch(err=>alert(err.message));
+ auth.signInWithEmailAndPassword(email.value,password.value)
+ .then(()=>alert("Logged in"));
 }
-</script>
-  <!-- EMAIL PASSWORD LOGIN -->
-<div class="authBox">
-  <h4>Email Login</h4>
 
-  <input type="email" id="email" placeholder="Email"><br><br>
-  <input type="password" id="password" placeholder="Password"><br><br>
-
-  <button onclick="emailSignup()">Create Account</button>
-  <button onclick="emailLogin()">Login</button>
-</div>
-/* ---------------- PHONE LOGIN ---------------- */
+/* ---------- PHONE LOGIN ---------- */
 let confirmation;
-window.onload=()=>{window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha");}
+window.onload=()=>window.recaptcha=new firebase.auth.RecaptchaVerifier("recaptcha");
 function sendOTP(){
- confirmation=auth.signInWithPhoneNumber(
-  document.getElementById("phone").value,
-  window.recaptcha
- );
+ auth.signInWithPhoneNumber(phone.value,recaptcha)
+ .then(r=>confirmation=r);
 }
-function verifyOTP(){
- confirmation.confirm(document.getElementById("otp").value);
-}
+function verifyOTP(){confirmation.confirm(otp.value);}
 
-/* ---------------- AUTH STATE ---------------- */
+/* ---------- AUTH STATE ---------- */
 auth.onAuthStateChanged(u=>{
  if(u){
-  document.getElementById("userName").innerText="Hello "+(u.displayName||u.phoneNumber);
-  loginBtn.style.display="none";
+  userName.innerText="Hello "+(u.displayName||u.phoneNumber||u.email);
+  googleBtn.style.display="none";
   logoutBtn.style.display="inline";
  }
 });
-function logoutUser(){auth.signOut();location.reload();}
+function logout(){auth.signOut();location.reload();}
 </script>
 
 </body>
