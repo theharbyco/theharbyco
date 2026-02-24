@@ -1,6 +1,4 @@
-/********************
-  BOOK DATA (52)
-*********************/
+// BOOK DATA (52)
 const books = [
   {id:1,title:"Atomic Habits",price:299,cat:"Self Help"},
   {id:2,title:"Rich Dad Poor Dad",price:249,cat:"Self Help"},
@@ -56,98 +54,64 @@ const books = [
   {id:52,title:"Mindset",price:299,cat:"Self Help"}
 ];
 
-/********************
-  CART
-*********************/
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = [];
 
-function addToCart(book){
-  const item = cart.find(i=>i.id===book.id);
-  item ? item.qty++ : cart.push({...book,qty:1});
-  saveCart();
-}
-
-function updateQty(id,delta){
-  const item = cart.find(i=>i.id===id);
-  if(!item) return;
-  item.qty += delta;
-  if(item.qty<=0) cart = cart.filter(i=>i.id!==id);
-  saveCart();
-}
-
-function saveCart(){
-  localStorage.setItem("cart",JSON.stringify(cart));
-  renderCart();
-}
-
-function renderCart(){
-  const box = document.getElementById("cartItems");
-  const count = document.getElementById("cartCount");
-  if(!box) return;
-  box.innerHTML="";
-  let total=0;
-  cart.forEach(i=>{
-    total+=i.price*i.qty;
-    box.innerHTML+=`
-      <div class="cart-row">
-        <span>${i.title}</span>
-        <button onclick="updateQty(${i.id},-1)">−</button>
-        ${i.qty}
-        <button onclick="updateQty(${i.id},1)">+</button>
-      </div>`;
-  });
-  count.innerText = cart.reduce((a,b)=>a+b.qty,0);
-  document.getElementById("cartTotal").innerText = "₹"+total;
-}
-
-/********************
-  COVER FETCH (NO RANDOM)
-*********************/
-async function getCover(title){
-  try{
-    const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(title)}&maxResults=1`);
-    const j = await r.json();
-    return j.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
-      || `https://source.unsplash.com/300x400/?book`;
-  }catch{
-    return `https://source.unsplash.com/300x400/?book`;
-  }
-}
-
-/********************
-  RENDER BOOKS
-*********************/
-async function renderBooks(list){
-  const grid = document.getElementById("books");
-  grid.innerHTML="";
-  for(const b of list){
-    const img = await getCover(b.title);
-    grid.innerHTML+=`
+// RENDER BOOKS
+function renderBooks(list){
+  document.getElementById("books").innerHTML =
+    list.map(b=>`
       <div class="book">
-        <img loading="lazy" src="${img}">
+        <img src="${b.img}">
         <h4>${b.title}</h4>
-        <p>₹${b.price}</p>
-        <button onclick='addToCart(${JSON.stringify(b)})'>Add to Cart</button>
-      </div>`;
-  }
+        <b>₹${b.price}</b><br>
+        <button onclick="addToCart(${b.id})">Add to Cart</button>
+      </div>
+    `).join("");
 }
 
-/********************
-  SEARCH + FILTER
-*********************/
+// SEARCH
 function searchBooks(q){
-  renderBooks(books.filter(b=>b.title.toLowerCase().includes(q.toLowerCase())));
+  q=q.toLowerCase();
+  renderBooks(books.filter(b=>b.title.toLowerCase().includes(q)));
 }
 
-function filterCat(cat){
-  cat==="All" ? renderBooks(books) :
-  renderBooks(books.filter(b=>b.cat===cat));
+// CART
+function addToCart(id){
+  let item = cart.find(i=>i.id===id);
+  if(item) item.qty++;
+  else{
+    let b = books.find(x=>x.id===id);
+    cart.push({...b,qty:1});
+  }
+  updateCart();
 }
 
-/********************
-  INIT
-*********************/
-document.addEventListener("DOMContentLoaded",()=>{
-  renderBooks(books);
-  renderCart();
-});
+function changeQty(id,delta){
+  let item = cart.find(i=>i.id===id);
+  item.qty+=delta;
+  if(item.qty<=0) cart = cart.filter(i=>i.id!==id);
+  updateCart();
+}
+
+function updateCart(){
+  let total=0,count=0;
+  document.getElementById("cartItems").innerHTML =
+    cart.map(i=>{
+      total+=i.price*i.qty;
+      count+=i.qty;
+      return `
+        <div class="cart-item">
+          ${i.title}
+          <div class="qty">
+            <button onclick="changeQty(${i.id},-1)">-</button>
+            ${i.qty}
+            <button onclick="changeQty(${i.id},1)">+</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  document.getElementById("cartTotal").innerText=total;
+  document.getElementById("cartCount").innerText=count;
+}
+
+renderBooks(books);
