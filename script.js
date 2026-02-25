@@ -76,8 +76,8 @@ function emailLogin(){
  .catch(e=>alert(e.message));
 }
 function googleLogin(){
- const p=new firebase.auth.GoogleAuthProvider();
- auth.signInWithPopup(p).then(()=>closeLogin());
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithRedirect(provider);
 }
 
 auth.onAuthStateChanged(u=>{
