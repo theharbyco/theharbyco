@@ -115,6 +115,11 @@ function toggleCart(){
 /* LOGIN */
 function openLogin(){loginModal.style.display="flex"}
 function closeLogin(){loginModal.style.display="none"}
+function logoutUser(){
+  auth.signOut().then(()=>{
+    closeLogin();
+  });
+}
 
 function emailLogin(){
  auth.signInWithEmailAndPassword(email.value,password.value)
@@ -126,8 +131,20 @@ function googleLogin(){
   auth.signInWithRedirect(provider);
 }
 
-auth.onAuthStateChanged(u=>{
- if(u) userName.innerText="Hi, "+(u.displayName||u.email);
+auth.onAuthStateChanged(user=>{
+  if(user){
+    // Logged IN
+    document.getElementById("loginBtn").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "inline-block";
+
+    document.getElementById("userName").innerText =
+      "Hi, " + (user.displayName || user.email.split("@")[0]);
+  } else {
+    // Logged OUT
+    document.getElementById("loginBtn").style.display = "inline-block";
+    document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("userName").innerText = "";
+  }
 });
 
 /* CHECKOUT */
