@@ -1,87 +1,48 @@
-*{box-sizing:border-box;font-family:Arial}
-body{margin:0;background:#f4f4f4}
-
-.topbar{
-display:flex;
-gap:10px;
-padding:10px;
-align-items:center;
-background:#fff;
-position:sticky;
-top:0;
-z-index:10;
+body{margin:0;font-family:Arial;background:#f4f6fa}
+header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px;background:#000;color:#fff
 }
-
-.logo{display:flex;align-items:center;gap:6px;font-weight:bold}
-.logo img{width:32px;height:32px;border-radius:50%}
-
-.search{flex:1;padding:8px}
-
-.actions{display:flex;gap:10px;align-items:center}
-button{padding:6px 10px;cursor:pointer}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{width:36px;height:36px;border-radius:50%}
+header input{flex:1;padding:8px;border-radius:6px;border:none}
+.nav button{margin-left:6px}
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:10px;
-padding:10px;
+ display:grid;
+ grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+ gap:12px;padding:12px
 }
-
 .book{
-background:#fff;
-padding:8px;
-border-radius:6px;
-text-align:center;
+ background:#fff;border-radius:10px;padding:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,.1);
+ text-align:center
 }
 .book img{width:100%;height:200px;object-fit:cover}
-.book button{width:100%}
 
-.floating-cart{
-position:fixed;
-right:10px;
-bottom:10px;
-width:260px;
-background:#fff;
-padding:10px;
-display:none;
-box-shadow:0 0 10px rgba(0,0,0,.2);
+.cart{
+ position:fixed;bottom:20px;right:20px;
+ background:#000;color:#fff;padding:12px;
+ border-radius:50%;cursor:pointer
 }
-
-.cart-btn{cursor:pointer}
+.cart-box{
+ position:fixed;bottom:90px;right:20px;
+ background:#fff;padding:12px;width:250px;
+ display:none;border-radius:12px
+}
 
 .modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.5);
-display:flex;
-justify-content:center;
-align-items:center;
+ position:fixed;top:0;left:0;width:100%;height:100%;
+ background:rgba(0,0,0,.6);
+ display:none;align-items:center;justify-content:center
 }
-
 .modal-box{
-background:#fff;
-padding:15px;
-width:260px;
-position:relative;
+ background:#fff;padding:20px;border-radius:14px;width:300px
 }
+.modal-box input{width:100%;padding:8px;margin:6px 0}
 
-.modal-box input{width:100%;margin:5px 0;padding:6px}
-.modal-box button{width:100%;margin:5px 0}
-
-.close{
-position:absolute;
-right:5px;
-top:5px;
-background:none;
-border:none;
-font-size:18px;
-}
-
-body.dark{background:#020617;color:#fff}
-body.dark .topbar,
-body.dark .book,
-body.dark .floating-cart,
-body.dark .modal-box{
-background:#020617;color:#fff;border:1px solid #334155
+.orders{display:none;padding:20px}
+.order-card{
+ background:#fff;padding:12px;margin:10px 0;
+ border-radius:10px;box-shadow:0 3px 8px rgba(0,0,0,.1)
 }
