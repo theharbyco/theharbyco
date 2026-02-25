@@ -2,70 +2,98 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TheHarbyCo – Books Store</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Harby Co – Online Book Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<!-- Firebase compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
-<link rel="stylesheet" href="style.css">
+<style>
+body{margin:0;font-family:Arial;background:#f4f6f8}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#000;color:#fff}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:36px;height:36px;border-radius:50%}
+nav button{background:none;border:none;color:#fff;font-size:14px;margin-left:12px;cursor:pointer}
+
+.searchBox{padding:12px}
+.searchBox input{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc}
+
+#books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;padding:14px}
+.book{background:#fff;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.book img{width:100%;height:200px;object-fit:cover;border-radius:6px}
+.book button{margin-top:6px;padding:6px 10px}
+
+.floating-cart{
+ position:fixed;bottom:20px;right:20px;
+ background:#000;color:#fff;
+ padding:12px;border-radius:10px;
+ width:260px;display:none
+}
+.cart-item{display:flex;justify-content:space-between;margin:4px 0}
+.cart-item button{padding:2px 6px}
+
+#loginModal{
+ position:fixed;top:0;left:0;width:100%;height:100%;
+ background:rgba(0,0,0,.6);
+ display:none;align-items:center;justify-content:center
+}
+.login-box{
+ background:#fff;padding:20px;border-radius:10px;
+ width:300px
+}
+.login-box input{width:100%;padding:8px;margin:6px 0}
+.login-box button{width:100%;padding:8px;margin-top:6px}
+
+footer{text-align:center;padding:20px;font-size:13px;color:#666}
+</style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<header class="topbar">
+<header>
   <div class="logo">
-    <img src="logo.png">
-    <span>TheHarbyCo</span>
+    <img src="logo.png" alt="logo">
+    <b>The Harby Co</b>
   </div>
-
-  <input class="search" placeholder="Search books..." oninput="searchBooks(this.value)">
-
-  <div class="actions">
+  <nav>
+    <button onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
     <button onclick="openLogin()">Login</button>
-    <button onclick="toggleDark()">🌙</button>
-    <div class="cart-btn" onclick="toggleCart()">🛒 <span id="cartCount">0</span></div>
-  </div>
+    <span id="userName"></span>
+  </nav>
 </header>
 
-<!-- BOOKS -->
-<div id="books" class="grid"></div>
+<div class="searchBox">
+  <input placeholder="Search books..." oninput="searchBooks(this.value)">
+</div>
 
-<!-- FLOATING CART -->
+<div id="books"></div>
+
+<!-- CART -->
 <div id="cart" class="floating-cart">
-  <h3>Your Cart</h3>
+  <h4>Cart</h4>
   <div id="cartItems"></div>
-  <b id="cartTotal">₹0</b>
+  <b id="cartTotal">₹0</b><br><br>
   <button onclick="checkout()">Pay Securely</button>
 </div>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal" class="modal">
-  <div class="modal-box">
+<div id="loginModal">
+  <div class="login-box">
     <h3>Login</h3>
-
+    <button onclick="googleLogin()">Login with Google</button>
+    <hr>
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
-    <button onclick="emailLogin()">Email Login</button>
-
-    <hr>
-
-    <button onclick="googleLogin()">Google Login</button>
-
-    <hr>
-
-    <input id="phone" placeholder="+91XXXXXXXXXX">
-    <div id="recaptcha"></div>
-    <button onclick="sendOTP()">Send OTP</button>
-
-    <input id="otp" placeholder="OTP">
-    <button onclick="verifyOTP()">Verify OTP</button>
-
-    <button class="close" onclick="closeLogin()">✖</button>
+    <button onclick="emailLogin()">Login</button>
+    <button onclick="emailSignup()">Create Account</button>
+    <button onclick="closeLogin()">Close</button>
   </div>
 </div>
+
+<footer>
+© 2026 The Harby Co
+</footer>
 
 <script src="script.js"></script>
 </body>
