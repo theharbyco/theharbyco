@@ -2,98 +2,73 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Harby Co – Online Book Store</title>
+<title>The Harby Co</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Firebase compat SDK -->
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
-<style>
-body{margin:0;font-family:Arial;background:#f4f6f8}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#000;color:#fff}
-.logo{display:flex;align-items:center;gap:10px}
-.logo img{width:36px;height:36px;border-radius:50%}
-nav button{background:none;border:none;color:#fff;font-size:14px;margin-left:12px;cursor:pointer}
-
-.searchBox{padding:12px}
-.searchBox input{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc}
-
-#books{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;padding:14px}
-.book{background:#fff;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.book img{width:100%;height:200px;object-fit:cover;border-radius:6px}
-.book button{margin-top:6px;padding:6px 10px}
-
-.floating-cart{
- position:fixed;bottom:20px;right:20px;
- background:#000;color:#fff;
- padding:12px;border-radius:10px;
- width:260px;display:none
-}
-.cart-item{display:flex;justify-content:space-between;margin:4px 0}
-.cart-item button{padding:2px 6px}
-
-#loginModal{
- position:fixed;top:0;left:0;width:100%;height:100%;
- background:rgba(0,0,0,.6);
- display:none;align-items:center;justify-content:center
-}
-.login-box{
- background:#fff;padding:20px;border-radius:10px;
- width:300px
-}
-.login-box input{width:100%;padding:8px;margin:6px 0}
-.login-box button{width:100%;padding:8px;margin-top:6px}
-
-footer{text-align:center;padding:20px;font-size:13px;color:#666}
-</style>
 </head>
 
 <body>
 
 <header>
   <div class="logo">
-    <img src="logo.png" alt="logo">
-    <b>The Harby Co</b>
+    <img src="logo.png">
+    <span>The Harby Co</span>
   </div>
-  <nav>
-    <button onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
+
+  <input placeholder="Search books..." oninput="searchBooks(this.value)">
+
+  <div class="nav">
     <button onclick="openLogin()">Login</button>
-    <span id="userName"></span>
-  </nav>
+    <button onclick="showOrders()">My Orders</button>
+  </div>
 </header>
 
-<div class="searchBox">
-  <input placeholder="Search books..." oninput="searchBooks(this.value)">
+<!-- BOOKS -->
+<div id="books" class="grid"></div>
+
+<!-- FLOATING CART -->
+<div class="cart" onclick="toggleCart()">
+  🛒 <span id="cartCount">0</span>
 </div>
 
-<div id="books"></div>
-
-<!-- CART -->
-<div id="cart" class="floating-cart">
-  <h4>Cart</h4>
+<div id="cartBox" class="cart-box">
+  <h3>Your Cart</h3>
   <div id="cartItems"></div>
-  <b id="cartTotal">₹0</b><br><br>
-  <button onclick="checkout()">Pay Securely</button>
+  <b>Total: <span id="cartTotal">₹0</span></b>
+  <button onclick="checkout()">Checkout</button>
 </div>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal">
-  <div class="login-box">
+<div id="loginModal" class="modal">
+  <div class="modal-box">
     <h3>Login</h3>
-    <button onclick="googleLogin()">Login with Google</button>
-    <hr>
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
     <button onclick="emailLogin()">Login</button>
-    <button onclick="emailSignup()">Create Account</button>
-    <button onclick="closeLogin()">Close</button>
+    <button onclick="googleLogin()">Login with Google</button>
+    <span onclick="closeLogin()">Close</span>
   </div>
 </div>
 
-<footer>
-© 2026 The Harby Co
-</footer>
+<!-- ORDERS -->
+<div id="ordersPage" class="orders">
+  <h2>My Orders</h2>
+  <div id="ordersList"></div>
+</div>
+
+<!-- INVOICE -->
+<div id="invoiceModal" class="modal">
+  <div class="modal-box">
+    <h3>Invoice</h3>
+    <div id="invoiceData"></div>
+    <button onclick="invoiceModal.style.display='none'">Close</button>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
