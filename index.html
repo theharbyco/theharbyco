@@ -100,6 +100,50 @@
       margin-top: 30px;
     }
   </style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "PASTE_YOUR_KEY",
+    authDomain: "PASTE_YOUR_DOMAIN",
+    projectId: "PASTE_PROJECT_ID",
+    storageBucket: "PASTE_BUCKET",
+    messagingSenderId: "PASTE_ID",
+    appId: "PASTE_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const productList = document.getElementById("productList");
+
+  const loadProducts = async () => {
+    const querySnapshot = await getDocs(collection(db, "products"));
+    productList.innerHTML = "";
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+
+      productList.innerHTML += `
+        <div class="product">
+          <img src="${data.image}" />
+          <h3>${data.title}</h3>
+          <p class="price">₹${data.price}</p>
+          <button onclick="addToCart('${doc.id}', '${data.title}', ${data.price})">
+            Add to Cart
+          </button>
+        </div>
+      `;
+    });
+  };
+
+  loadProducts();
+
+  window.addToCart = function(id, title, price) {
+    alert(title + " added to cart (STEP 4 me proper cart banega)");
+  };
+</script>
 </head>
 <body>
 
@@ -144,11 +188,6 @@
   </footer>
 
   <script>
-    let cart = 0;
-    function addToCart() {
-      cart++;
-      document.getElementById("cartCount").innerText = cart;
-    }
   </script>
 
 </body>
