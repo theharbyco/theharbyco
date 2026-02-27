@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout | The Harby Co</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #111;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #111;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    footer {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 12px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>The Harby Co – Checkout</header>
+
+<div class="container">
+
+  <div class="total">
+    Total Amount: ₹<span id="totalAmount">0</span>
+  </div>
+
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <textarea id="address" placeholder="Full Address" rows="4" required></textarea>
+
+  <button onclick="placeOrder()">Place Order</button>
+
+</div>
+
+<footer>© 2026 The Harby Co</footer>
+
+<script>
+const cart = JSON.parse(localStorage.getItem("cart")) || [];
+const totalAmount = document.getElementById("totalAmount");
+
+let total = 0;
+cart.forEach(item => total += item.price);
+totalAmount.innerText = total;
+
+function placeOrder() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+
+  if (!name || !phone || !address) {
+    alert("Please fill all details ❌");
+    return;
+  }
+
+  const order = {
+    customer: { name, phone, address },
+    items: cart,
+    total: total,
+    date: new Date().toLocaleString()
+  };
+
+  // save order (optional – future use)
+  localStorage.setItem("lastOrder", JSON.stringify(order));
+
+  // clear cart
+  localStorage.removeItem("cart");
+
+  alert("Order placed successfully 🎉");
+
+  // redirect
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
