@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Premium Reader - The Harby Co</title>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Turn.js -->
+  <script src="https://cdn.jsdelivr.net/npm/turn.js@4/turn.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0f0f0f;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+      font-family: Arial;
+    }
+
+    #topbar {
+      padding: 10px;
+      background: #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #flipbook {
+      width: 90%;
+      height: 88vh;
+      margin: auto;
+    }
+
+    .page {
+      background: white;
+      position: relative;
+    }
+
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: rotate(-30deg) translate(-50%, -50%);
+      font-size: 20px;
+      color: rgba(0,0,0,0.15);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    button {
+      background: #ff6600;
+      border: none;
+      padding: 8px 15px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <div>📖 Premium Reader</div>
+  <div>
+    <button onclick="toggleFullScreen()">Fullscreen</button>
+  </div>
+</div>
+
+<div id="flipbook"></div>
+
+<script type="module">
+
+import { auth, db } from "./firebase-config.js";
+import { checkSubscription } from "./script.js";
+import { getStorage, ref, getDownloadURL }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+import { doc, setDoc, getDoc }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const storage = getStorage();
+
+const urlParams = new URLSearchParams(window.location.search);
+const pdfPath = urlParams.get("book");
+
+if (!pdfPath) {
+  alert("No book selected");
+  window.location.href = "dashboard.html";
+}
+
+const bookId = pdfPath.replace(/[^\w]/g, "");
+
+async function loadPDF() {
+
+  const active = await checkSubscription();
+
+  if (!active) {
+    alert("Subscription expired!");
+    window.location.href = "subscription.html";
+    return;
+  }
+
+  const user = auth.currentUser;
+
+  const fileRef = ref(storage, pdfPath);
+  const url = await getDownloadURL(fileRef);
+
+  const pdf = await pdfjsLib.getDocument(url).promise;
+
+  const flipbook = $("#flipbook");
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: 1.2 });
+
+    const div = $("<div class='page'></div>");
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({
+      canvasContext: context,
+      viewport: viewport
+    }).promise;
+
+    const watermark = document.createElement("div");
+    watermark.className = "watermark";
+    watermark.innerText = user.email;
+
+    div.append(canvas);
+    div.append(watermark);
+    flipbook.append(div);
+  }
+
+  flipbook.turn({
+    width: flipbook.width(),
+    height: flipbook.height(),
+    autoCenter: true,
+    when: {
+      turned: async function(event, page) {
+        await saveProgress(page);
+      }
+    }
+  });
+
+  await resumeProgress();
+}
+
+async function saveProgress(page) {
+  const user = auth.currentUser;
+  await setDoc(doc(db,"readingProgress",user.uid+"_"+bookId),{
+    page:page,
+    updatedAt:new Date()
+  });
+}
+
+async function resumeProgress() {
+  const user = auth.currentUser;
+  const snap = await getDoc(doc(db,"readingProgress",user.uid+"_"+bookId));
+  if (snap.exists()) {
+    $("#flipbook").turn("page", snap.data().page);
+  }
+}
+
+loadPDF();
+
+window.toggleFullScreen = function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+</script>
+
+<script>
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("keydown", function(e) {
+  if (e.ctrlKey && (e.key === "s" || e.key === "p")) {
+    e.preventDefault();
+  }
+});
+</script>
+
+</body>
+</html>
