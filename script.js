@@ -14,11 +14,14 @@ import {
 const provider = new GoogleAuthProvider();
 
 // ---------------- LOGIN ----------------
-window.googleLogin = async function () {
-  await signInWithPopup(auth, provider);
-  window.location.href = "dashboard.html";
-};
-
+function googleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(() => {
+      window.location.href = "dashboard.html";
+    })
+    .catch(error => alert(error.message));
+}
 // ---------------- LOGOUT ----------------
 window.logout = async function () {
   await signOut(auth);
