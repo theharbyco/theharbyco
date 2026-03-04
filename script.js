@@ -16,12 +16,19 @@ const provider = new GoogleAuthProvider();
 // ---------------- LOGIN ----------------
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider)
-    .then(() => {
-      window.location.href = "dashboard.html";
-    })
-    .catch(error => alert(error.message));
+  firebase.auth().signInWithRedirect(provider);
 }
+
+// Redirect ke baad user check
+firebase.auth().getRedirectResult()
+  .then((result) => {
+    if (result.user) {
+      window.location.href = "dashboard.html";
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 // ---------------- LOGOUT ----------------
 window.logout = async function () {
   await signOut(auth);
