@@ -36,3 +36,18 @@ a:hover {
   background: #16a34a;
   transform: scale(1.05);
 }
+button {
+  padding: 14px 30px;
+  background: #ffffff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: #e5e5e5;
+}
