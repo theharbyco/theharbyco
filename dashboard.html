@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+</head>
+<body>
+
+<h2>Dashboard</h2>
+
+<button onclick="openReader('pdfs/rich-mindset.pdf')">
+Read Rich Mindset
+</button>
+
+<button onclick="logout()">Logout</button>
+
+<script type="module">
+window.openReader = function(path){
+  window.location.href="reader.html?book="+path;
+}
+</script>
+
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
